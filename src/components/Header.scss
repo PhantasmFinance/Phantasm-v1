@@ -1,0 +1,61 @@
+@import "../var.scss";
+
+#header {
+
+  width: 100vw;
+  background: white;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-bottom: 1px solid $grey-light;
+
+  .box {
+    font-size: 1rem;
+    font-weight: 400;
+    margin-top: 0.5rem;
+    margin-bottom: .5rem;
+    margin-left: .5rem;
+    padding: 0.5rem 0.8rem;
+    border-radius: 10px;
+  }
+
+
+  .link {
+    font-size: 1rem;
+    font-weight: 400;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    margin-left: 0.8rem;
+    padding: 0.5rem 0.8rem;
+    border-radius: 10px;
+    border: none;
+    background-color: #FFFFFF;
+
+    &.selected {
+      color: green;
+      background: $grey-extra-light;
+      border: none;
+    }
+
+    &:hover {
+      cursor: pointer;
+      background: $grey-extra-light;
+    }
+  }
+
+  .address {
+    margin-left: auto;
+    margin-right: 1rem;
+    margin-bottom: 0;
+    font-size: 1.1rem;
+  }
+  .HeaderName {
+    position: fixed;
+    left: 50%;
+    color: green;
+    margin-top: auto;
+    margin-bottom: auto;
+    font-weight: 500; 
+    font-size: 25px;
+  }  
+}

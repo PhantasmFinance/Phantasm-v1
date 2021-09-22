@@ -1,0 +1,13 @@
+
+@import "../var.scss";
+
+.wallet-button {
+  background: $green;
+  color: white;
+  padding: 0.5rem 0.8rem;
+  border-radius: 10px;
+  border: none;
+  font-size: 1.1rem;
+  font-weight: 400;
+  margin: 1rem;
+}

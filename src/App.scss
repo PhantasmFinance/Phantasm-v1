@@ -1,0 +1,61 @@
+@import "var.scss";
+@import "~antd/dist/antd.css";
+
+* {
+  font-family: $font;
+}
+
+.app {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+button {
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.modal-container {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+  .network-modal {
+    border-radius: 10px;
+    background: white;
+    padding: 20px;
+
+    p {
+      margin: 0;
+      padding: 0;
+    }
+  }
+}
+
+.loader {
+  border: 3px solid #f3f3f3; /* Light grey */
+  border-top: 3px solid #000; /* Blue */
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
