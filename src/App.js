@@ -4,19 +4,20 @@ import { Contract } from "@ethersproject/contracts";
 // import { getDefaultProvider } from "@ethersproject/providers";
 import useWeb3Modal from "./hooks/useWeb3Modal";
 import  Header  from "./components/Header";
-
+import  Dashboard  from "./components/Dashboard";
+import  abi from "./assets/testabi.json";
 import "./App.scss";
 import "antd/dist/antd.css";  
 
-const targetNetwork = "Mainnet";
-var contractAddress="";
-const abi="";
+const targetNetwork = "kovan"
+var contractAddress="0x4c78955d513b39de335033e5ba5353a5544e277b";  
 
 function App() {
   const [provider, loadWeb3Modal, logoutOfWeb3Modal] = useWeb3Modal();
   const [userAddress, setUserAddress] = useState(null);
   const [network, setNetwork] = useState(null);
   const [perpetualContract, setPerpetualContract] = useState();
+
 
 
   useEffect(() => {
@@ -71,6 +72,7 @@ function App() {
             loadWeb3Modal={loadWeb3Modal}
             logoutOfWeb3Modal={logoutOfWeb3Modal}
           />
+          <Dashboard/>
         </Route>
       </Router>
       {network && network.name !== targetNetwork && (
