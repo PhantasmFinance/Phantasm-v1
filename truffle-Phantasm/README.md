@@ -6,7 +6,7 @@ The goal of Phantasm Finance is to further modularize leveraged long and short p
 A long position is initiated with Coin X and Stablecoin Y. To do so Imagine a pair that lets you use Coin X as collateral to take out a loan for USDC.
 
 1. You deposit $100 of Coin X
-2. You take out a loan of $60 in USDC against that $100 in GLM collateral
+2. You take out a loan of $60 in USDC against that $100 in coin X 
 3. You buy more Coin X with that $60
 4. Deposit the Coin X you just bought as collateral
 
