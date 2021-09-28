@@ -28,10 +28,6 @@ A floating-rate bond is debt to someone holding collateral in a lending pool. Si
 
 I plan to continue work on Phantasm Finance after the hackathon ends, with some of the improvements outlined below 
 
-- Launch of 88mph v3 allowing the purchase of specific bonds, making the process more streamlined
-
 - Launch on Polygon bringing the gas cost to a reasonable level. 
-
-- Storing positions as an ERC-721 NFT would also allow for them to be traded on open markets. 
 
 - UI/UX Improvements
