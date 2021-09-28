@@ -1,70 +1,37 @@
-# Getting Started with Create React App
+# 👻 Phantasm Finance 👻
+## defi doesn't have to be scary
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+The goal of Phantasm Finance is to further modularize leveraged long and short positions in crypto, make them more accessible, and make use of floating-rate bonds to secure them against market conditions. That's a lot of words, so let's dissect it.
 
-## Available Scripts
+A long position is initiated with Coin X and Stablecoin Y. To do so Imagine a pair that lets you use Coin X as collateral to take out a loan for USDC.
 
-In the project directory, you can run:
+1. You deposit $100 of Coin X
+2. You take out a loan of $60 in USDC against that $100 in coin X 
+3. You buy more Coin X with that $60
+4. Deposit the Coin X you just bought as collateral
 
-### `yarn start`
+Then, if Coin X moons you have $200 of collateral (Assuming the $160 of collateral appreciated in value $40), but only owe the lending provider $60 of USDC, so you can repay the debt to claim your collateral, which is worth $40 more than just holding the Coin X
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+The reverse can be done to create a short position, where debt is owed in Coin X to collect the stablecoin collateral (Coin X is assumed to decrease in value, so it can be bought back for less).
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+Phantasm Finance does this using Kashi and Sushiswap of the Sushi family, for their ease of incorporation across multiple chains, and End to End integration, but built with other providers in mind.
 
-### `yarn test`
+## Demo
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Test out a demo yourself at [Demo.net](). DO NOT USE REAL ETH, this is a Ropstein Testnet deployment.
 
-### `yarn build`
+## Secure Shorts/Longs with Floating-Rate Bonds
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+A floating-rate bond is debt to someone holding collateral in a lending pool. Since the debt is fixed, a sudden spike in APR would increase the value of the bond greatly. Conversely, lenders close to their limits would be closer to liquidation. As Long/Short postions require lending if they buy a FRB on a pool which they are lending from, or similar pool, the bond would appreciate with any spike in APR, which would allow for them to 'insulate' their short position against the movemements of the lending market.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Future Plans
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+I plan to continue work on Phantasm Finance after the hackathon ends, with some of the improvements outlined below 
 
-### `yarn eject`
+- Launch of 88mph v3 allowing the purchase of specific bonds, making the process more streamlined
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+- Launch on Polygon bringing the gas cost to a reasonable level. 
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- Storing positions as an ERC-721 NFT would also allow for them to be traded on open markets. 
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- UI/UX Improvements
