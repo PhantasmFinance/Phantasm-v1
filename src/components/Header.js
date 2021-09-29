@@ -52,14 +52,6 @@ export default function Header({
       </h2>
 
       <button
-        className={`link ${pathname === "/" ? "selected" : ""}`}
-        onClick={() => {
-          goTo("/");
-        }}
-      >
-        Market
-      </button>
-      <button
         className={`link ${pathname === "/dashboard" ? "selected" : ""}`}
         onClick={() => {
           goTo("/dashboard");

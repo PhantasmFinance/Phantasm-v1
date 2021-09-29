@@ -1,11 +1,90 @@
 @import "../var.scss";
 
-#Dashboard {
-    color: red;
-    background-color: red;
-  .card {
-    color: red;
-    background-color: red;
-    width: 300px
-  }
+.mainpage {
+  background: linear-gradient(to bottom, #59c173, #a17fe0, #5d26c1); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  margin: 0;
+  width: 100%;
+  overflow-x: hidden; /* Hide horizontal scrollbar */
+
+
 }
+.dashboard{
+  padding: 50px;
+}
+
+    .market-container{
+        display: flex;
+        flex-direction: row;
+        height: 800px;
+        padding-bottom: 50px;
+        
+      }
+      .sidebar{
+        padding-right: 150px;
+
+      }  
+      .trandingview{
+          border: 3px solid white;
+      }
+
+
+  
+    .card{
+      padding: 100px;
+      width: 400px;
+      border-radius: 20px;
+      background-color: #a17fe0;
+    }
+
+    .imginside{
+      padding: 10px;
+
+    }
+
+
+
+  .site-footer{
+    text-align: center;
+    background-color:  #6400cf;
+    height: 75px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    }
+    
+  .footer-copyright{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+  
+  }
+  .bonds{
+    padding-top: 50px;
+    padding-bottom: 75px;
+  }
+  .ant-select-selector {
+    color: green;
+  }
+  .select{
+    width: 500px;
+    color: red;
+  }
+  .ant-slider-step{
+    color: green;
+  }
+  
+  .ant-slider {
+    margin-bottom: 16px;
+  }
+  .ant-card-head-title{
+    text-align: center;
+    font-size: 25px;
+    font-weight: 600;
+  }
+  .card-leverage-slider{
+    padding-top: 40px;
+  }
+  .submit-box{
+    width: 300px;
+  }
