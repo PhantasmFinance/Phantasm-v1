@@ -13,22 +13,22 @@ interface IPhantasm {
     function swap(address _tokenIn, address _tokenOut, uint _amountIn, uint _amountOutMin, address _to) external;
     function _getAmountOutMin(address _tokenIn, address _tokenOut, uint _amountIn) external view returns (uint);
 
-    function supply(uint256 _amount) external;
-    function enterMarkets() external;
-    function redeem(uint256 _cTokenAmount) external;
-    function borrow(address _cTokenToBorrow) external;
+    function supply(address _token, address _cToken, uint256 _amount) external;
+    function enterMarkets(address _cToken) external;
+    function redeem(address _cToken, uint _cTokenAmount) external;
+    function borrow(address _cTokenToBorrow, uint256 _cTokenDecimals) external;
     function repay(address _tokenBorrowed, address _cTokenBorrowed, uint256 _amount) external;
 
-    function getInfo() external returns (uint256 exchangeRate, uint256 supplyRate);
-    function estimateBalanceOfUnderlying() external returns (uint256);
-    function getSuppliedBalance() external returns (uint256);
-    function getCollateralFactor() external view returns (uint256);
-    function getBorrowBalance(address _cTokenBorrowed) external returns (uint256);
-    function getCTokenBalance() external view returns (uint256);
+    function getInfo(address _cToken) external returns (uint256 exchangeRate, uint256 supplyRate);
+    function estimateBalanceOfUnderlying(address _cToken, uint256 _cTokenDecimals, uint256 _tokenDecimals) external returns (uint256);
+    function getSuppliedBalance(address _cToken) external returns (uint256);
+    function getCollateralFactor(address _cToken) external view returns (uint256);
+    function getBorrowBalance(address _cToken) external returns (uint256);
+    function getCTokenBalance(address _cToken) external view returns (uint256);
     function getPriceFeed(address _cToken) external view returns (uint256);
     function getBorrowRatePerBlock(address _cTokenBorrowed) external view returns (uint256);
 
     function checkLiquidity() external view returns (uint256);
     function getAccountLiquidity() external view returns (uint256 liquidity, uint256 shortfall);
-    function getMaxBorrow(uint256 liquidity, uint256 price) external view returns (uint256);
+    function getMaxBorrow(uint256 liquidity, uint256 price, uint256 _cTokenBorrowDecimals) external view returns (uint256);
 }

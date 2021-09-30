@@ -88,7 +88,6 @@ contract Phantasm is IPhantasm {
         swap(_shortToken, address(dai), bal, _getAmountOutMin(_shortToken, address(dai), bal), address(this));
     }
 
-
     /*
 
 
@@ -98,56 +97,56 @@ contract Phantasm is IPhantasm {
 
     */
 
-    function supply(uint _amount) external virtual override {
-        token.transferFrom(msg.sender, address(this), _amount);
-        token.approve(address(cToken), _amount);
-        require(cToken.mint(_amount) == 0, "mint failed");
+    function supply(address _token, address _cToken, uint _amount) external virtual override {
+        IERC20(_token).transferFrom(msg.sender, address(this), _amount);
+        IERC20(_token).approve(_cToken, _amount);
+        require(CErc20(_cToken).mint(_amount) == 0, "mint failed");
     }
 
-    function enterMarkets() public virtual override {
+    // Allow your supplied assets to be lent out and accrue interest
+    // _cToken should be the cTokens the contract has supplied
+    function enterMarkets(address _cToken) public virtual override {
         address[] memory cTokens = new address[](1);
-        cTokens[0] = address(cToken);
+        cTokens[0] = _cToken;
         uint[] memory errors = comptroller.enterMarkets(cTokens);
         require(errors[0] == 0, "Comptroller.enterMarkets failed.");
     }
 
     // not view function
-    function getInfo() external virtual override returns (uint exchangeRate, uint supplyRate) {
+    function getInfo(address _cToken) external virtual override returns (uint exchangeRate, uint supplyRate) {
         // Amount of current exchange rate from cToken to underlying
-        exchangeRate = cToken.exchangeRateCurrent();
+        exchangeRate = CErc20(_cToken).exchangeRateCurrent();
         // Amount added to you supply balance this block
-        supplyRate = cToken.supplyRatePerBlock();
+        supplyRate = CErc20(_cToken).supplyRatePerBlock();
     }
 
     // not view function
-    function estimateBalanceOfUnderlying() external virtual override returns (uint) {
-        uint cTokenBal = cToken.balanceOf(address(this));
-        uint exchangeRate = cToken.exchangeRateCurrent();
-        uint decimals = 8; // WBTC = 8 decimals
-        uint cTokenDecimals = 8;
+    // Do Something about the decimals
+    function estimateBalanceOfUnderlying(address _cToken, uint256 _cTokenDecimals, uint256 _tokenDecimals) external virtual override returns (uint) {
+        uint cTokenBal = CErc20(_cToken).balanceOf(address(this));
+        uint exchangeRate = CErc20(_cToken).exchangeRateCurrent();
 
-        return (cTokenBal * exchangeRate) / 10**(18 + decimals - cTokenDecimals);
+        return (cTokenBal * exchangeRate) / 10**(18 + _tokenDecimals - _cTokenDecimals);
     }
 
     // not view function
-    function getSuppliedBalance() external virtual override returns (uint) {
-        return cToken.balanceOfUnderlying(address(this));
+    function getSuppliedBalance(address _cToken) external virtual override returns (uint) {
+        return CErc20(_cToken).balanceOfUnderlying(address(this));
     }
 
-    function redeem(uint _cTokenAmount) external virtual override {
-        require(cToken.redeem(_cTokenAmount) == 0, "redeem failed");
+    function redeem(address _cToken, uint _cTokenAmount) external virtual override {
+        require(CErc20(_cToken).redeem(_cTokenAmount) == 0, "redeem failed");
         // cToken.redeemUnderlying(underlying amount);
     }
 
     // enter market and borrow
-    function borrow(address _cTokenToBorrow) external virtual override {
-        enterMarkets();
+    function borrow(address _cTokenToBorrow, uint256 _cTokenDecimals) external virtual override {
 
         uint256 liquidity = checkLiquidity(); // USD scaled up by 1e18
         uint256 price = getPriceFeed(_cTokenToBorrow); // USD scaled up by 1e18
 
         // decimals - decimals of token to borrow
-        uint256 maxBorrow = getMaxBorrow(liquidity, price);
+        uint256 maxBorrow = getMaxBorrow(liquidity, price, _cTokenDecimals);
         require(maxBorrow > 0, "max borrow = 0");
 
         // borrow 50% of max borrow
@@ -157,17 +156,16 @@ contract Phantasm is IPhantasm {
 
     // borrowed balance (includes interest)
     // not view function
-    function getBorrowBalance(address _cTokenBorrowed) public virtual override returns (uint) {
-        return CErc20(_cTokenBorrowed).borrowBalanceCurrent(address(this));
+    function getBorrowBalance(address _cToken) public virtual override returns (uint) {
+        return CErc20(_cToken).borrowBalanceCurrent(address(this));
     }
 
     // repay borrow
-    function repay(address _tokenBorrowed, address _cTokenBorrowed, uint _amount) external virtual override {
+    function repay(address _tokenBorrowed, address _cTokenBorrowed, uint256 _amount) external virtual override {
         IERC20(_tokenBorrowed).approve(_cTokenBorrowed, _amount);
         // _amount = 2 ** 256 - 1 means repay all
         require(CErc20(_cTokenBorrowed).repayBorrow(_amount) == 0, "repay failed");
     }
-
 
     /*
 
@@ -178,8 +176,8 @@ contract Phantasm is IPhantasm {
 
     */
 
-    function getCTokenBalance() external virtual override view returns (uint) {
-        return cToken.balanceOf(address(this));
+    function getCTokenBalance(address _cToken) external virtual override view returns (uint) {
+        return CErc20(_cToken).balanceOf(address(this));
     }
 
     // open price feed - USD price of token to borrow
@@ -188,8 +186,8 @@ contract Phantasm is IPhantasm {
         return priceFeed.getUnderlyingPrice(_cToken);
     }
 
-    function getCollateralFactor() external virtual override view returns (uint) {
-        (bool isListed, uint colFactor, bool isComped) = comptroller.markets(address(cToken));
+    function getCollateralFactor(address _cToken) external virtual override view returns (uint) {
+        (bool isListed, uint colFactor, bool isComped) = comptroller.markets(_cToken);
         return colFactor; // divide by 1e18 to get in %
     }
 
@@ -220,8 +218,8 @@ contract Phantasm is IPhantasm {
         return (_liquidity, _shortfall);
     }
 
-    function getMaxBorrow(uint256 liquidity, uint256 price) public virtual override view returns (uint) {
-        return (liquidity * (10**cTokenBorrowDecimals)) / price;
+    function getMaxBorrow(uint256 liquidity, uint256 price, uint256 _cTokenBorrowDecimals) public virtual override view returns (uint) {
+        return (liquidity * (10**_cTokenBorrowDecimals)) / price;
     }
 
     /*
