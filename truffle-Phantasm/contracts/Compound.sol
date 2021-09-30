@@ -40,11 +40,14 @@ contract CompoundImplementation is IPhantasm {
     ░█─── ▀─▀▀ ▀▀▀ ▀───▀ ▀──▀ ▀─▀▀ ▄▄▄█ 　 ░█─── ─▀▀▀ ▀──▀ ▀▀▀ ──▀── ▀▀▀ ▀▀▀▀ ▀──▀ ▀▀▀
     */
 
-    function openPosition(address _borrowToken, address _borrowCToken, uint256 initialAmount, uint256 _borrowFactor) internal virtual override {
+
+    function openPosition(address _borrowToken, address _borrowCToken, uint256 initialAmount, uint256 _borrowFactor) internal virtual override{
         uint256 nextCollateralAmount = initialAmount;
         for(uint i = 0; i < 5; i++) {
             nextCollateralAmount = addCollateral(_borrowToken, _borrowCToken, nextCollateralAmount, _borrowFactor);
         }
+        Position createdPositions memory;
+        createdPositions
     }
 
     function addCollateral(address _borrowToken, address _borrowCToken, uint256 _collateralAmount, uint256 _borrowFactor) internal virtual override returns(uint256) {
@@ -70,19 +73,42 @@ contract CompoundImplementation is IPhantasm {
     ░█▄▄█ █▄▄▀ █──█ █── █▀▀ ▀▀█ ▀▀█ 
     ░█─── ▀─▀▀ ▀▀▀▀ ▀▀▀ ▀▀▀ ▀▀▀ ▀▀▀
     */
+    struct Position {
+        bool    isLong;
+        address asset;
+        address stablecoin;
+        uint256 repayAmount;
+        uint256 amountOwed;
+    }
 
-    function leverageLong(address _longToken, uint256 _borrowAmount, uint256 _borrowFactor, address _swapImplementation) external virtual override {
+    function leverageLong(address _longToken, uint256 _borrowAmount, uint256 _borrowFactor, address _swapImplementation) external virtual override returns (Position memory) {
         openPosition(address(dai), address(cDai), _borrowAmount, _borrowFactor);
 
         uint256 bal = dai.balanceOf(address(this));
         swapImplementation(_swapImplementation).swap(address(dai), _longToken, bal, _getAmountOutMin(address(dai), _longToken, bal), address(this));
+        Position createdPosition memory;
+
+        createdPosition.isLong = true;
+        createdPosition.asset = _longToken;
+        createdPosition.stablecoin = dai;
+
+
+        return createdPosition;
     }
 
-    function leverageShort(address _shortToken, address _shortCToken, uint256 _borrowAmount, uint256 _borrowFactor,address _swapImplementation) external virtual override {
+    function leverageShort(address _shortToken, address _shortCToken, uint256 _borrowAmount, uint256 _borrowFactor,address _swapImplementation) external virtual override returns (Position memory){
         openPosition(_shortToken, _shortCToken, _borrowAmount, _borrowFactor);
 
         uint256 bal = IERC20(_shortToken).balanceOf(address(this));
         swapImplementation(_swapImplementation).swap(_shortToken, address(dai), bal, _getAmountOutMin(_shortToken, address(dai), bal), address(this));
+        Position createdPosition memory;
+
+        createdPosition.isLong = false;
+        createdPosition.asset = _shortToken;
+        createdPosition.stablecoin = dai;
+
+
+        return createdPosition;
     }
 
 
