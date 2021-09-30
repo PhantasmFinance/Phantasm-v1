@@ -4,11 +4,9 @@ import { Form,  Button, List } from "antd";
 import { Card} from 'antd';
 import { Slider, Avatar, Input, Space } from 'antd';
 import "./Dashboard.scss"
-import { Footer } from 'antd/lib/layout/layout';
 import { Select } from 'antd';
+import Bonds from "./Bonds";
 
-const { Option } = Select;
-const { Meta } = Card;
 
 function handleChange(value) {
   console.log(`selected ${value}`);
@@ -19,9 +17,12 @@ export default function Dashboard(){
   const [isLong, setIsLong] = useState(true);
   const [leverage, setLeverage] = useState(5);
   const [symbol, setSymbol] = useState("ETHDAI");
-    const [currentValue, setCurrentValue] = useState(0)
+  const [currentValue, setCurrentValue] = useState(0)
+  const bondInfo = ['month 1', 'month 2', 'month 3'];
 
- 
+
+
+
   return (
     
     <div class="mainpage">
@@ -98,8 +99,8 @@ export default function Dashboard(){
                           trackStyle={{ backgroundColor: "green" }}
                           handleStyle={{ borderColor:"green" }}   
                           max={10} 
-                          onChange={(value)=> { setCurrentValue(value)
-                                    }}/>
+                          onChange={(value)=> { setCurrentValue(value)}}
+                      />
 
                     </div>
                     <Form.Item>
@@ -124,53 +125,25 @@ export default function Dashboard(){
                     </Form.Item>
                 </Form>
             </div>     
-             
             <TradingViewWidget
                   symbol="ETHUSD"
                   theme={Themes.DARK}
                   locale="en"
                   autosize
-            />
+            />             
         </div>
+
         <h1 align="center" class="bonds" >Available Bonds</h1>
 
-        <div class="cards">
 
-          <Card
-              className="card"
-              title="Insulated Bond"
-              style={{
-                borderRadius: '25px',
-                padding: '15px',
-                backgroundColor:"#a17fe0",
-                borderColor:"#a17fe0"
-            }}                           
-          >
-              <div class="row-card">
-                <p>Asset 1 : {} </p>
-              </div>
-
-              <div class="row-card">
-                <p>Asset 2 : {} </p>
-              </div>
-              <div class="card-leverage-slider">
-                    <p>
-                      Leverage{" "}
-                    </p>
-                    <Slider trackStyle={{ backgroundColor: "green" }}
-                            handleStyle={{ borderColor:"green" }} 
-                            defaultValue={0}
-                            min={0}
-                            max={10}
-                    />
-
-              </div>
-          </Card>        
-           
+        <div class="horizontal-cards">
+           {bondInfo.map(month => <Bonds> {bondInfo}</Bonds>)}           
         </div>
       </main>
 
-
+      <footer class="site-footer">
+           <div className="footer-copyright">&copy; 2021 Phantasm Finance</div>
+      </footer>
 
     </div>
   );
