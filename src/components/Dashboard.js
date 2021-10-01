@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import TradingViewWidget, { Themes } from 'react-tradingview-widget';
 import { Form,  Button, List } from "antd";
-import { Card} from 'antd';
 import { Slider, Avatar, Input, Space } from 'antd';
 import "./Dashboard.scss"
 import { Select } from 'antd';
@@ -18,7 +17,9 @@ export default function Dashboard(){
   const [leverage, setLeverage] = useState(5);
   const [symbol, setSymbol] = useState("ETHDAI");
   const [currentValue, setCurrentValue] = useState(0)
-  const bondInfo = ['month 1', 'month 2', 'month 3'];
+  const BondProps = {Asset1: 'Compound', Asset2: 'DAI'};
+
+  const bondInfo = [BondProps, BondProps, BondProps];
 
 
 
@@ -45,8 +46,7 @@ export default function Dashboard(){
                 >
                     <div style={{ overflow: 'hidden', width: "500px" }}>
                       <Form.Item
-                        label="Collateral"
-                      >
+                        label="Collateral"                      >
                         <Input placeholder="Collateral" />
                       </Form.Item>
                     </div>
@@ -137,7 +137,7 @@ export default function Dashboard(){
 
 
         <div class="horizontal-cards">
-           {bondInfo.map(month => <Bonds> {bondInfo}</Bonds>)}           
+          {bondInfo.map(month =>   <Bonds {...BondProps}/>)}           
         </div>
       </main>
 
