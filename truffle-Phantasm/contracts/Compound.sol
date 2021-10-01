@@ -13,20 +13,10 @@ contract CompoundImplementation {
     IERC20 public WETH = IERC20(0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2);
     IERC20 public dai = IERC20(0x6B175474E89094C44Da98b954EedeAC495271d0F);
     CErc20 public cDai = CErc20(0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643);
-    IERC20 public token;
-    CErc20 public cToken;
-    IERC20 public tokenBorrow;
-    CErc20 public cTokenBorrow;
-    uint256 public cTokenBorrowDecimals;
 
 
-    constructor (address _token, address _cToken, address _tokenBorrow, address _cTokenBorrow, uint256 _cTokenBorrowDecimals) {
-        token = IERC20(_token);
-        cToken = CErc20(_cToken);
+    constructor () {
 
-        tokenBorrow = IERC20(_tokenBorrow);
-        cTokenBorrow = CErc20(_cTokenBorrow);
-        cTokenBorrowDecimals = _cTokenBorrowDecimals;
     }
 
     receive() external payable {}
@@ -221,7 +211,7 @@ contract CompoundImplementation {
         return (_liquidity, _shortfall);
     }
 
-    function getMaxBorrow(uint256 liquidity, uint256 price) public virtual  view returns (uint) {
-        return (liquidity * (10**cTokenBorrowDecimals)) / price;
+    function getMaxBorrow(uint256 liquidity, uint256 price, uint256 _cTokenBorrowDecimals) public virtual  view returns (uint) {
+        return (liquidity * (10**_cTokenBorrowDecimals)) / price;
     }
 }
