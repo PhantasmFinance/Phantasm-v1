@@ -15,7 +15,7 @@ contract Uniswap {
     IUniswapV2Router public uniswap = IUniswapV2Router(0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D);
     IERC20 public WETH = IERC20(0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2);
     
-    function swap(address _tokenIn, address _tokenOut, uint _amountIn, uint _amountOutMin, address _to) public virtual  {
+    function swap(address _tokenIn, address _tokenOut, uint _amountIn, uint _amountOutMin, address _to) public {
         IERC20(_tokenIn).approve(address(uniswap), _amountIn);
 
         address[] memory path;
@@ -31,9 +31,11 @@ contract Uniswap {
         }
 
         uniswap.swapExactTokensForTokens(_amountIn, _amountOutMin, path, _to, block.timestamp);
+
+        IERC20(_tokenOut).transfer(msg.sender, IERC20(_tokenOut).balanceOf(address(this)));
     }
 
-    function _getAmountOutMin(address _tokenIn, address _tokenOut, uint _amountIn) public virtual  view returns (uint) {
+    function _getAmountOutMin(address _tokenIn, address _tokenOut, uint _amountIn) public view returns (uint) {
         address[] memory path;
         if (_tokenIn == address(WETH) || _tokenOut == address(WETH)) {
             path = new address[](2);
