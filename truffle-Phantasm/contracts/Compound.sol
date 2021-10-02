@@ -29,11 +29,11 @@ contract CompoundImplementation {
 
 
     function openPosition(address _borrowToken, address _borrowCToken, uint256 initialAmount, uint256 _borrowFactor) internal  {
-        uint256 nextCollateralAmount = initialAmount;
+        uint256 nextCollateralAmount = initialAmount; // Goal is to lend initial Amount
         enterMarkets(_borrowCToken);
-        //for(uint i = 0; i < 5; i++) {
-        nextCollateralAmount = addCollateral(_borrowToken, _borrowCToken, nextCollateralAmount, _borrowFactor);
-        //}
+        for(uint i = 0; i < 5; i++) {
+            nextCollateralAmount = addCollateral(_borrowToken, _borrowCToken, nextCollateralAmount, _borrowFactor);
+        }
     }
 
     function addCollateral(address _borrowToken, address _borrowCToken, uint256 _collateralAmount, uint256 _borrowFactor) internal returns(uint256) {
@@ -42,7 +42,7 @@ contract CompoundImplementation {
         uint borrowAmount = (_collateralAmount * _borrowFactor) / 100;
         // Borrow
 
-        require(CErc20(_borrowCToken).borrow(10000) == 0, "Borrow Failed");
+        require(CErc20(_borrowCToken).borrow(borrowAmount) == 0, "Borrow Failed");
         return borrowAmount;
     }
 
@@ -76,7 +76,7 @@ contract CompoundImplementation {
         uint256 _amountOutMin = swapImplementation(_swapImplementation)._getAmountOutMin(address(dai), _longToken, bal);
         IERC20(dai).transfer(_swapImplementation, bal);
         swapImplementation(_swapImplementation).swap(address(dai), _longToken, bal, _amountOutMin, address(this));
-
+        IERC20(_longToken).transfer(msg.sender, IERC20(_longToken).balanceOf(address(this)));
     }
 
     function leverageShort(address _shortToken, address _shortCToken, uint256 _borrowAmount, uint256 _borrowFactor,address _swapImplementation) external  {
