@@ -14,9 +14,13 @@ interface lenderImplementation {
     function leverageShort(address _shortToken, address _shortCToken, uint256 _borrowAmount, uint256 _borrowFactor, address _swapImplementation) external;
 }
 
+
 contract PhantasmManager is ERC721 {
 
     address private owner;
+
+    event gotHere(uint256 _line); // here for now
+
 
     struct Position {
         bool    isLong;
@@ -85,11 +89,11 @@ contract PhantasmManager is ERC721 {
     }
 
     function addSwapImplementation(address _implementation) onlyOwner public {
-        swapImplementations[swapImplementations.length] = _implementation;
+        swapImplementations.push(_implementation);
     }
 
     function addLenderImplementation(address _implementation) onlyOwner public {
-        lenderImplementations[lenderImplementations.length] = _implementation;
+        lenderImplementations.push(_implementation);
     }
 
 
@@ -111,13 +115,13 @@ contract PhantasmManager is ERC721 {
         uint256 _borrowAmount,
         uint256 _borrowFactor,
         uint256 _assetAmount
-    ) public {
+    ) public returns (uint256) {
         //function leverageLong(address _longToken, uint256 _borrowAmount, uint256 _borrowFactor, address _swapImplementation) external;
         // Just to see the functions its actually calling because this part is a bit of a mess
-        require(IERC20(_longToken).transferFrom(msg.sender,lenderImplementations[_lenderImplementation],_assetAmount));
         require(_assetAmount > _borrowAmount);
+        require(IERC20(0x6B175474E89094C44Da98b954EedeAC495271d0F).transferFrom(msg.sender, lenderImplementations[_lenderImplementation], _assetAmount));
 
-        lenderImplementation(lenderImplementations[_lenderImplementation]).leverageLong(_longToken, _borrowFactor, _borrowAmount,swapImplementations[_swapImplementation]);
+        lenderImplementation(lenderImplementations[_lenderImplementation]).leverageLong(_longToken, _borrowAmount, _borrowFactor,swapImplementations[_swapImplementation]);
         
         Position memory createdPosition;
 
@@ -129,7 +133,8 @@ contract PhantasmManager is ERC721 {
         createdPosition.lender = _lenderImplementation;
 
 
-        addPosition(createdPosition);
+        uint256 PositionID = addPosition(createdPosition);
+        return PositionID;
     }
 
     function openShortPositionNFT(
