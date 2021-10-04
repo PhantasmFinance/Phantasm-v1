@@ -42,17 +42,17 @@ contract CompoundImplementation {
         uint borrowAmount = (_collateralAmount * _borrowFactor) / 100;
         // Borrow
 
-        require(CErc20(_borrowCToken).borrow(borrowAmount) == 0, "Borrow Failed");
+        require(CErc20(0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643).borrow(borrowAmount) == 0, "Borrow Failed"); // Borrow DAI against new tokens
         return borrowAmount;
     }
 
-    function closePosition(address _borrowedToken, address _borrowedCToken, address _collateralCToken, uint256 _debt, uint256 _value, address _recipient) external   {
+    function closeLongPosition(address _borrowedToken, address _borrowedCtoken, address _collateralCToken, uint256 _debt, uint256 _value, address _recipient) external   {
         // Closing position will Usually take Dai and cDai Addresses for _borrowedToken and _borrowedCToken values respectively
 
-        IERC20(_borrowedToken).approve(_borrowedCToken, _value);
-        CErc20(_borrowedCToken).repayBorrow(_debt);
+        IERC20(_borrowedToken).approve(_borrowedCtoken, _value);
+        CErc20(_borrowedCtoken).repayBorrow(_debt);
         CErc20(_collateralCToken).redeem(_value);
-        IERC20(_borrowedToken).transfer(_recipient, _value);
+        IERC20(_borrowedToken).transfer(_recipient, IERC20(_borrowedToken).balanceOf(address(this)));
     }
 
     /*
@@ -68,23 +68,28 @@ contract CompoundImplementation {
         uint256 valueRetained;
         uint64 _lender;
     }
-
-    function leverageLong(address _longToken, uint256 _borrowAmount, uint256 _borrowFactor, address _swapImplementation) external  {
-        openPosition(address(dai), address(cDai), _borrowAmount, _borrowFactor);
+//leverageLong(_longToken,_longCtoken ,_borrowAmount, _borrowFactor,swapImplementations[_swapImplementation]);
+    function leverageLong(address _longToken,address _cTokenLong,uint256 _borrowAmount, uint256 _borrowFactor, address _swapImplementation, address[] memory _swapRoute) external returns (uint256) {
+        openPosition(_longToken, _cTokenLong, _borrowAmount, _borrowFactor);
 
         uint256 bal = dai.balanceOf(address(this));
-        uint256 _amountOutMin = swapImplementation(_swapImplementation)._getAmountOutMin(address(dai), _longToken, bal);
+
         IERC20(dai).transfer(_swapImplementation, bal);
-        swapImplementation(_swapImplementation).swap(address(dai), _longToken, bal, _amountOutMin, address(this));
-        IERC20(_longToken).transfer(msg.sender, IERC20(_longToken).balanceOf(address(this)));
+        // AmoutOuntMin, does need a rework, but route is externally dictated so it's still fine
+        //     function swap(address _tokenIn, address _tokenOut, uint _amountIn, uint _amountOutMin, address _to, address[] memory _swapRoute) public returns (uint){
+
+        uint256 tokensBought = swapImplementation(_swapImplementation).swap(address(dai), _longToken, bal, 0, address(this), _swapRoute);
+        require(false, "wack");//uint2str(tokensBought));
+        IERC20(_longToken).transfer(msg.sender, tokensBought);
+        return tokensBought;
     }
 
-    function leverageShort(address _shortToken, address _shortCToken, uint256 _borrowAmount, uint256 _borrowFactor,address _swapImplementation) external  {
+    function leverageShort(address _shortToken, address _shortCToken, uint256 _borrowAmount, uint256 _borrowFactor,address _swapImplementation, address[] memory _swapRoute) external  {
         openPosition(_shortToken, _shortCToken, _borrowAmount, _borrowFactor);
 
         uint256 bal = IERC20(_shortToken).balanceOf(address(this));
         uint256 _amountOutMin = swapImplementation(_swapImplementation)._getAmountOutMin(address(dai), _shortToken, bal);
-        swapImplementation(_swapImplementation).swap(_shortToken, address(dai), bal, _amountOutMin, address(this));
+        swapImplementation(_swapImplementation).swap(_shortToken, address(dai), bal, _amountOutMin, address(this), _swapRoute);
 
     }
 

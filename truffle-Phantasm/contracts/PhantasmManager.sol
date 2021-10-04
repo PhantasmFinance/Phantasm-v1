@@ -10,8 +10,9 @@ import './interfaces/swapImplementation.sol';
 
 
 interface lenderImplementation {
-    function leverageLong(address _longToken, uint256 _borrowAmount, uint256 _borrowFactor, address _swapImplementation) external;
+    function leverageLong(address _longToken,address _cTokenLong,uint256 _borrowAmount, uint256 _borrowFactor, address _swapImplementation, address[] memory _swapRoute) external returns (uint256);
     function leverageShort(address _shortToken, address _shortCToken, uint256 _borrowAmount, uint256 _borrowFactor, address _swapImplementation) external;
+    function closeLongPosition(address _borrowedToken, address _borrowedCtoken, address _collateralCToken, uint256 _debt, uint256 _value, address _recipient) external;
 }
 
 
@@ -112,16 +113,20 @@ contract PhantasmManager is ERC721 {
         uint64 _lenderImplementation, 
         uint64 _swapImplementation,
         address _longToken,
+        address _longCtoken,
         uint256 _borrowAmount,
         uint256 _borrowFactor,
-        uint256 _assetAmount
+        uint256 _assetAmount,
+        address[] memory _swapRoute
     ) public returns (uint256) {
         //function leverageLong(address _longToken, uint256 _borrowAmount, uint256 _borrowFactor, address _swapImplementation) external;
         // Just to see the functions its actually calling because this part is a bit of a mess
-        require(_assetAmount > _borrowAmount);
-        require(IERC20(0x6B175474E89094C44Da98b954EedeAC495271d0F).transferFrom(msg.sender, lenderImplementations[_lenderImplementation], _assetAmount));
+        require(_assetAmount > _borrowAmount, "Collateral must be bigger than borrowAmount");
 
-        lenderImplementation(lenderImplementations[_lenderImplementation]).leverageLong(_longToken, _borrowAmount, _borrowFactor,swapImplementations[_swapImplementation]);
+        require(IERC20(_longToken).transferFrom(msg.sender, lenderImplementations[_lenderImplementation], _assetAmount), "Transfer Failed");
+        // await PhantasmManager.openLongPositionNFT(  borrowMe, 50, AssetAmount ,{"from" : "0xF977814e90dA44bFA03b6295A0616a897441aceC"});
+      
+        uint256 coinsBought = lenderImplementation(lenderImplementations[_lenderImplementation]).leverageLong(_longToken,_longCtoken ,_borrowAmount, _borrowFactor,swapImplementations[_swapImplementation], _swapRoute);
         
         Position memory createdPosition;
 
@@ -129,7 +134,7 @@ contract PhantasmManager is ERC721 {
         createdPosition.asset = _longToken;
         createdPosition.debtOwed = _borrowAmount;
         createdPosition.stablecoin = 0x6B175474E89094C44Da98b954EedeAC495271d0F; // DAI for now
-        createdPosition.valueRetained = _assetAmount - _borrowAmount;
+        createdPosition.valueRetained = coinsBought;
         createdPosition.lender = _lenderImplementation;
 
 
@@ -137,6 +142,7 @@ contract PhantasmManager is ERC721 {
         return PositionID;
     }
 
+/*
     function openShortPositionNFT(
         uint64 _lenderImplementation, 
         uint64 _swapImplementation,
@@ -144,31 +150,40 @@ contract PhantasmManager is ERC721 {
         address _shortCToken,
         uint256 _borrowAmount,
         uint256 _borrowFactor
-    ) public {
+    ) public returns (uint256){
         //function leverageShort(address _shortToken, address _shortCToken, uint256 _borrowAmount, uint256 _borrowFactor, address _swapImplementation) external;
         // Just to see the functions its actually calling because this part is a bit of a mess
         lenderImplementation(lenderImplementations[_lenderImplementation]).leverageShort(_shortToken, _shortCToken,_borrowAmount, _borrowFactor, swapImplementations[_swapImplementation]);
 
         Position memory createdPosition;
 
+        createdPosition.isLong = false;
+        createdPosition.asset = _shortToken;
+        createdPosition.debtOwed = _borrowAmount;
+        createdPosition.stablecoin = 0x6B175474E89094C44Da98b954EedeAC495271d0F; // DAI for now
+        createdPosition.lender = _lenderImplementation;
 
-        addPosition(createdPosition);
-    }
 
-    // fix args for this, but needed them here to start passing tests
-    /*
-    function closeLongPosition(uint256 _tokenID, address _borrowedCToken, address _collateralCToken) public {
-        /*
-        Not even close to being done
-        require(ownerOf(_tokenID) == msg.sender);
+        uint256 PositionID = addPosition(createdPosition);
 
-        // Next fetch the position
-
-        Position storage liquidateMe = positionLedger[_tokenID];
-        require(liquidateMe.isLong);
-        //closePosition(address _borrowedToken, address _borrowedCToken, address _collateralCToken, uint256 _debt, uint256 _value, address _recipient)
-
-        //lenderImplementation(lenderImplementations[liquidateMe.lender]).closePosition(liquidateMe.asset, , , liquidateMe.debtOwed, liquidateMe.valueRetained, msg.sender)
+        return PositionID;
     }
     */
+    // fix args for this, but needed them here to start passing tests
+    
+    function closeLongPosition(uint256 _tokenID, address _borrowedCToken, address _collateralCToken, uint8 _swapImplementation, address[] memory _swapRoute) public {
+        require(ownerOf(_tokenID) == msg.sender, "You have to own something to get it's value");
+        Position memory liquidateMe = viewPosition(_tokenID);
+        //swap(address _tokenIn, address _tokenOut, uint _amountIn, uint _amountOutMin, address _to)
+        IERC20(liquidateMe.asset).transfer(swapImplementations[_swapImplementation], liquidateMe.valueRetained);
+        // swap all of the asset into DAI // MIN_OUt will usually be debt owed
+        
+        swapImplementation(swapImplementations[_swapImplementation]).swap(liquidateMe.asset, 0x6B175474E89094C44Da98b954EedeAC495271d0F,liquidateMe.valueRetained ,liquidateMe.debtOwed, lenderImplementations[liquidateMe.lender], _swapRoute);
+        //function closePosition(address _borrowedToken, address _borrowedCToken, address _collateralCToken, uint256 _debt, uint256 _value, address _recipient)
+        // cDAI is only collateral atm
+
+        lenderImplementation(lenderImplementations[liquidateMe.lender]).closeLongPosition(liquidateMe.asset, _borrowedCToken, 0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643, liquidateMe.debtOwed, liquidateMe.valueRetained,msg.sender);
+
+    }
+    
 }
