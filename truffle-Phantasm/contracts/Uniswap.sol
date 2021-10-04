@@ -13,20 +13,20 @@ contract Uniswap {
         ─▀▀▀ ▀──▀ ▀▀▀ ▀▀▀ ─▀─▀─ ▀──▀ █▀▀▀
     */
     IUniswapV2Router public uniswap = IUniswapV2Router(0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D);
-    IERC20 public WETH = IERC20(0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2);
+    IERC20 public USDC = IERC20(0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48);
     
     function swap(address _tokenIn, address _tokenOut, uint _amountIn, uint _amountOutMin, address _to) public {
         IERC20(_tokenIn).approve(address(uniswap), _amountIn);
 
         address[] memory path;
-        if (_tokenIn == address(WETH) || _tokenOut == address(WETH)) {
+        if (_tokenIn == address(USDC) || _tokenOut == address(USDC)) {
             path = new address[](2);
             path[0] = _tokenIn;
             path[1] = _tokenOut;
         } else {
             path = new address[](3);
             path[0] = _tokenIn;
-            path[1] = address(WETH);
+            path[1] = address(USDC);
             path[2] = _tokenOut;
         }
 
@@ -37,14 +37,14 @@ contract Uniswap {
 
     function _getAmountOutMin(address _tokenIn, address _tokenOut, uint _amountIn) public view returns (uint) {
         address[] memory path;
-        if (_tokenIn == address(WETH) || _tokenOut == address(WETH)) {
+        if (_tokenIn == address(USDC) || _tokenOut == address(USDC)) {
             path = new address[](2);
             path[0] = _tokenIn;
             path[1] = _tokenOut;
         } else {
             path = new address[](3);
             path[0] = _tokenIn;
-            path[1] = address(WETH);
+            path[1] = address(USDC);
             path[2] = _tokenOut;
         }
 
