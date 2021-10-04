@@ -79,7 +79,6 @@ contract CompoundImplementation {
         //     function swap(address _tokenIn, address _tokenOut, uint _amountIn, uint _amountOutMin, address _to) public returns (uint){
 
         uint256 tokensBought = swapImplementation(_swapImplementation).swap(address(dai), _longToken, bal, 0, address(this));
-        require(false, "wack");//uint2str(tokensBought));
         IERC20(_longToken).transfer(msg.sender, tokensBought);
         return tokensBought;
     }
