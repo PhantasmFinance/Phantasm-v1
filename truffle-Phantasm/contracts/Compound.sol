@@ -69,27 +69,27 @@ contract CompoundImplementation {
         uint64 _lender;
     }
 //leverageLong(_longToken,_longCtoken ,_borrowAmount, _borrowFactor,swapImplementations[_swapImplementation]);
-    function leverageLong(address _longToken,address _cTokenLong,uint256 _borrowAmount, uint256 _borrowFactor, address _swapImplementation, address[] memory _swapRoute) external returns (uint256) {
+    function leverageLong(address _longToken,address _cTokenLong,uint256 _borrowAmount, uint256 _borrowFactor, address _swapImplementation) external returns (uint256) {
         openPosition(_longToken, _cTokenLong, _borrowAmount, _borrowFactor);
 
         uint256 bal = dai.balanceOf(address(this));
 
         IERC20(dai).transfer(_swapImplementation, bal);
         // AmoutOuntMin, does need a rework, but route is externally dictated so it's still fine
-        //     function swap(address _tokenIn, address _tokenOut, uint _amountIn, uint _amountOutMin, address _to, address[] memory _swapRoute) public returns (uint){
+        //     function swap(address _tokenIn, address _tokenOut, uint _amountIn, uint _amountOutMin, address _to) public returns (uint){
 
-        uint256 tokensBought = swapImplementation(_swapImplementation).swap(address(dai), _longToken, bal, 0, address(this), _swapRoute);
+        uint256 tokensBought = swapImplementation(_swapImplementation).swap(address(dai), _longToken, bal, 0, address(this));
         require(false, "wack");//uint2str(tokensBought));
         IERC20(_longToken).transfer(msg.sender, tokensBought);
         return tokensBought;
     }
 
-    function leverageShort(address _shortToken, address _shortCToken, uint256 _borrowAmount, uint256 _borrowFactor,address _swapImplementation, address[] memory _swapRoute) external  {
+    function leverageShort(address _shortToken, address _shortCToken, uint256 _borrowAmount, uint256 _borrowFactor,address _swapImplementation) external  {
         openPosition(_shortToken, _shortCToken, _borrowAmount, _borrowFactor);
 
         uint256 bal = IERC20(_shortToken).balanceOf(address(this));
         uint256 _amountOutMin = swapImplementation(_swapImplementation)._getAmountOutMin(address(dai), _shortToken, bal);
-        swapImplementation(_swapImplementation).swap(_shortToken, address(dai), bal, _amountOutMin, address(this), _swapRoute);
+        swapImplementation(_swapImplementation).swap(_shortToken, address(dai), bal, _amountOutMin, address(this));
 
     }
 
