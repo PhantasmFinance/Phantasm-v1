@@ -5,7 +5,7 @@ import './interfaces/IPhantasm.sol';
 import './interfaces/ICompound.sol';
 import './interfaces/IUniswap.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
-import './interfaces/DInterest.sol';
+import './interfaces/IDInterest.sol';
 
 contract EEIntegration {
 
