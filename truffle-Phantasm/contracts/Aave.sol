@@ -19,6 +19,7 @@ contract AaveImplementation {
     address public constant DAI = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
 
     function leverageLong(address _asset, address _swapper, uint256 _initialAmount, uint256 _borrowFactor) external returns (uint256, uint256) {
+        
         IERC20(_asset).transferFrom(msg.sender, address(this), _initialAmount);
         IERC20(_asset).approve(0x7d2768dE32b0b80b7a3454c06BdAc94A69DDc7A9, _initialAmount);
 
@@ -70,8 +71,9 @@ contract AaveImplementation {
         
     }
     
-    function closePosition(address _debtAsset, address _asset, address _swapper, uint256 _debtOwed, uint256 _totalCollateral) public {
+    function closeLongPosition(address _debtAsset, address _asset, address _swapper, uint256 _debtOwed, uint256 _totalCollateral) public {
         IERC20(_debtAsset).transferFrom(msg.sender, address(this), _debtOwed);
+        require(false, "Got here");
         repay(_debtAsset, _debtOwed);
         // Now with no debt, withdraw collateral
         withdraw(_asset, _totalCollateral);
