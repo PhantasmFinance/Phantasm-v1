@@ -80,7 +80,7 @@ contract EEIntegration {
         return insuredAmount;
     }
 
-    // NEEDS TO BE REVISED => thisYTAmount should be the *Price* to buy the yield tokens => not the total amount of Yield Tokens
+    // NEEDS TO BE REVISED => thisYTPrice should be the *Price* to buy the yield tokens => not the total amount of Yield Tokens
     function getTotalYTInBudget (address _token, uint256 _amountIn) public view returns (uint256 _insuranceAvailable) {
         uint256 insuranceAvailable = 0;
         uint256 amountLeft = _amountIn;
@@ -93,10 +93,10 @@ contract EEIntegration {
             for (uint256 i = 0; i < daiPools.length; i++) {
                 if (daiPools[i].depositsLength() != 0) {
                     for (uint64 j = 1; j <= daiPools[i].depositsLength(); j++) {
-                        uint256 thisYTAmount = getYTAvailableFromDeposit(address(daiPools[i]), j);
-                        if (amountLeft > thisYTAmount && daiPools[i].getDeposit(j).fundingID == 0) {
-                            amountLeft = amountLeft - thisYTAmount; // THIS IS WRONG -> thisYTAmount needs to be replaced with the PRICE of thisYTAmount
-                            insuranceAvailable = insuranceAvailable + thisYTAmount; // SAME GOES FOR THIS
+                        uint256 thisYTPrice = getYTPriceFromDeposit(address(daiPools[i]), j);
+                        if (amountLeft > thisYTPrice && daiPools[i].getDeposit(j).fundingID == 0) {
+                            amountLeft = amountLeft - thisYTPrice;
+                            insuranceAvailable = insuranceAvailable + thisYTPrice;
                         }
                     }
                 }
@@ -130,7 +130,8 @@ contract EEIntegration {
         return DInterest(_assetPool).getFunding(_fundingID).principalPerToken;
     }
 
-    function getYTAvailableFromDeposit(address _assetPool, uint64 _depositID) public view returns (uint256) {
-        return DInterest(_assetPool).getDeposit(_depositID).virtualTokenTotalSupply;
-    }   
+    function getYTPriceFromDeposit(address _assetPool, uint64 _depositID) public view returns (uint256) {
+        return (DInterest(_assetPool).getDeposit(_depositID).interestRate / DInterest(_assetPool).getDeposit(_depositID).maturationTimestamp - block.timestamp) * DInterest(_assetPool).getDeposit(_depositID).virtualTokenTotalSupply;
+    }
 }
+
