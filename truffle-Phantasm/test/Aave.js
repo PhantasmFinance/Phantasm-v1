@@ -34,13 +34,11 @@ contract("AaveLender", (accounts) => {
 
     });
   
-
+    
     it("Create a Long Position", async () => {
       // Iterative Tests here
-      /*
-    function leverageLong(address _asset, address _swapper, uint256 _initialAmount, uint256 _borrowFactor) external returns (uint256, uint256) {
-
-      */
+      
+      
 
       let AssetAmount = new BigNumber("11000000000000000000000")
 
@@ -57,7 +55,7 @@ contract("AaveLender", (accounts) => {
 
       await PhantasmManager.openLongPositionNFT(0,0, "0x514910771af9ca656af840dff83e8264ecf986ca", 50, AssetAmount, initialBorrow, {"from" : "0x28C6c06298d514Db089934071355E5743bf21d60"});
       
-      console.log("position opened")
+      console.log("Long position opened")
 
       erc20DAI.approve(PhantasmManager.address,maxApproval,{"from" : "0x28C6c06298d514Db089934071355E5743bf21d60"} )
 
@@ -65,27 +63,40 @@ contract("AaveLender", (accounts) => {
 
  
     });
+    
 
 
     it("Create a Short Position", async () => {
-      // Iterative Tests here
       /*
-    function leverageLong(address _asset, address _swapper, uint256 _initialAmount, uint256 _borrowFactor) external returns (uint256, uint256) {
-
+        Create and close a Short Position through Phantasm Manager
       */
 
       let AssetAmount = new BigNumber("11000000000000000000000")
 
-      LINK.approve(aaveLendingPool.address, AssetAmount, {"from" : "0x28C6c06298d514Db089934071355E5743bf21d60"})
+      LINK.approve(PhantasmManager.address, AssetAmount, {"from" : "0x28C6c06298d514Db089934071355E5743bf21d60"})
 
       let borrowMe = new BigNumber("500000000000000000000")
 
+      let accuredInterest = new BigNumber("100000000000000")
+
       let maxApproval = new BigNumber("99999999999999999999999999999999999999999")
 
-      erc20DAI.approve(aaveLendingPool.address, AssetAmount, {"from" : "0x28C6c06298d514Db089934071355E5743bf21d60"});
-
-      await aaveLendingPool.leverageShort("0x514910771af9ca656af840dff83e8264ecf986ca", UniswapImplementation.address,AssetAmount, borrowMe, 50, {"from" : "0x28C6c06298d514Db089934071355E5743bf21d60"});
+      erc20DAI.approve(PhantasmManager.address, AssetAmount, {"from" : "0x28C6c06298d514Db089934071355E5743bf21d60"});
+      /*
+        uint64 _lenderImplementation, 
+        uint64 _swapImplementation,
+        address _shortToken,
+        uint256 _borrowFactor,
+        uint256 _assetAmount,
+        uint256 _initialBorrow
+      */
+      await PhantasmManager.openShortPositionNFT(0, 0, "0x514910771af9ca656af840dff83e8264ecf986ca", 50 ,AssetAmount, borrowMe, {"from" : "0x28C6c06298d514Db089934071355E5743bf21d60"});
       
+      console.log("Short Position created")
+
+      LINK.approve(PhantasmManager.address ,maxApproval, {"from" : "0x28C6c06298d514Db089934071355E5743bf21d60"})
+
+      await PhantasmManager.closeShortPositionNFT(1, 0,accuredInterest,{"from" : "0x28C6c06298d514Db089934071355E5743bf21d60"})
 
  
     });
