@@ -18,8 +18,6 @@ contract PhantasmManager is ERC721 {
 
     address private owner;
 
-    event gotHere(uint256 _line); // here for now
-
 
     struct Position {
         bool    isLong;
