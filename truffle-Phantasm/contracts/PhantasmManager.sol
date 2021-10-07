@@ -8,8 +8,8 @@ import './interfaces/swapImplementation.sol';
 
 
 interface lenderImplementation {
-    function leverageLong(address _asset, address _swapper, uint256 _initialAmount, uint256 _borrowFactor) external returns (uint256, uint256);
-    function leverageShort(address _shortToken, address _shortCToken, uint256 _borrowAmount, uint256 _borrowFactor, address _swapImplementation) external;
+    function leverageLong(address _asset, address _swapper, uint256 _initialCollateralAmount, uint256 _initialBorrowAmount, uint256 _borrowFactor) external returns (uint256, uint256);
+    function leverageShort(address _asset, address _swapper, uint256 _initialCollateralAmount, uint256 _initialBorrowAmount, uint256 _borrowFactor) external returns (uint256, uint256);
     function closeLongPosition(address _debtAsset, address _asset, address _swapper, uint256 _debtOwed, uint256 _totalCollateral) external;
 }
 
@@ -112,14 +112,14 @@ contract PhantasmManager is ERC721 {
         uint64 _swapImplementation,
         address _longToken,
         uint256 _borrowFactor,
-        uint256 _assetAmount
+        uint256 _assetAmount,
+        uint256 _initialBorrow
 ) public returns (uint256) {
         //function leverageLong(address _longToken, uint256 _borrowAmount, uint256 _borrowFactor, address _swapImplementation) external;
         // Just to see the functions its actually calling because this part is a bit of a mess
         IERC20(_longToken).transferFrom(msg.sender, address(this), _assetAmount);
         IERC20(_longToken).approve(lenderImplementations[_lenderImplementation], _assetAmount);
-
-        (uint256 totalBorrow, uint256 totalCollateral) = lenderImplementation(lenderImplementations[_lenderImplementation]).leverageLong(_longToken, swapImplementations[_swapImplementation], _assetAmount, _borrowFactor);
+        (uint256 totalBorrow, uint256 totalCollateral) = lenderImplementation(lenderImplementations[_lenderImplementation]).leverageLong(_longToken, swapImplementations[_swapImplementation], _assetAmount, _initialBorrow, _borrowFactor);
         
 
         Position memory createdPosition;
@@ -137,16 +137,43 @@ contract PhantasmManager is ERC721 {
     }
 
     // fix args for this, but needed them here to start passing tests
-    function closeLongPosition(uint256 _tokenID, uint8 _swapImplementation) public {
+    function closeLongPosition(uint256 _tokenID, uint8 _swapImplementation, uint256 _interestAccured) public {
             require(ownerOf(_tokenID) == msg.sender, "You have to own something to get it's value");
             Position memory liquidateMe = viewPosition(_tokenID);
             //swap(address _tokenIn, address _tokenOut, uint _amountIn, uint _amountOutMin, address _to)
             // DAI to repay
-            IERC20(0x6B175474E89094C44Da98b954EedeAC495271d0F).transferFrom(msg.sender, address(this), liquidateMe.debtOwed);
-            IERC20(0x6B175474E89094C44Da98b954EedeAC495271d0F).approve(lenderImplementations[liquidateMe.lender], liquidateMe.debtOwed);
-            lenderImplementation(lenderImplementations[liquidateMe.lender]).closeLongPosition(0x6B175474E89094C44Da98b954EedeAC495271d0F, liquidateMe.asset, swapImplementations[_swapImplementation], liquidateMe.debtOwed, liquidateMe.totalCollateral);
+            uint256 amountToRepay = _interestAccured + liquidateMe.debtOwed;
+            IERC20(0x6B175474E89094C44Da98b954EedeAC495271d0F).transferFrom(msg.sender, address(this), amountToRepay);
+            IERC20(0x6B175474E89094C44Da98b954EedeAC495271d0F).approve(lenderImplementations[liquidateMe.lender], amountToRepay);
+            lenderImplementation(lenderImplementations[liquidateMe.lender]).closeLongPosition(0x6B175474E89094C44Da98b954EedeAC495271d0F, liquidateMe.asset, swapImplementations[_swapImplementation], amountToRepay, liquidateMe.totalCollateral);
 
     }
+
+    function openShortPositionNFT(
+         uint64 _lenderImplementation, 
+        uint64 _swapImplementation,
+        address _shortToken,
+        uint256 _borrowFactor,
+        uint256 _assetAmount,
+        uint256 _initialBorrow
+        ) public returns (uint256) {
+            IERC20(_shortToken).transferFrom(msg.sender, address(this), _assetAmount);
+            IERC20(_shortToken).approve(lenderImplementations[_lenderImplementation], _assetAmount);
+            (uint256 totalBorrow, uint256 totalCollateral) = lenderImplementation(lenderImplementations[_lenderImplementation]).leverageShort(_shortToken, swapImplementations[_swapImplementation], _assetAmount, _initialBorrow, _borrowFactor);
+
+            Position memory createdPosition;
+
+            createdPosition.isLong = false;
+            createdPosition.asset = _shortToken;
+            createdPosition.debtOwed = totalBorrow;
+            createdPosition.stablecoin = 0x6B175474E89094C44Da98b954EedeAC495271d0F; // DAI for now
+            createdPosition.totalCollateral = totalCollateral;
+            createdPosition.lender = _lenderImplementation;
+
+
+            uint256 PositionID = addPosition(createdPosition);
+            return PositionID;
+}
 
     
 }
