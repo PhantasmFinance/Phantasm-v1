@@ -43,8 +43,7 @@ contract AaveImplementation {
             deposit(_asset, tokensBought);
             totalCollateral += tokensBought;
         }
-        return (totalBorrow, totalCollateral);
-        
+        return (totalBorrow, totalCollateral); 
     }
 
     function leverageShort(address _asset, address _swapper, uint256 _initialCollateralAmount, uint256 _initialBorrowAmount, uint256 _borrowFactor) external returns (uint256, uint256) {
@@ -70,7 +69,7 @@ contract AaveImplementation {
         
     }
     
-    function closeLongPosition(address _debtAsset, address _asset, address _swapper, uint256 _debtOwed, uint256 _totalCollateral) public {
+    function closePosition(address _debtAsset, address _asset, address _swapper, uint256 _debtOwed, uint256 _totalCollateral) public {
         IERC20(_debtAsset).transferFrom(msg.sender, address(this), _debtOwed);
         IERC20(_debtAsset).approve(0x7d2768dE32b0b80b7a3454c06BdAc94A69DDc7A9, _debtOwed);
         repay(_debtAsset, _debtOwed);
@@ -112,7 +111,7 @@ contract AaveImplementation {
         return amountRepayed;
     }
 
-        function uint2str(uint _i) internal pure returns (string memory _uintAsString) {
+    function uint2str(uint _i) internal pure returns (string memory _uintAsString) {
         if (_i == 0) {
             return "0";
         }
