@@ -44,23 +44,49 @@ contract("AaveLender", (accounts) => {
 
       let AssetAmount = new BigNumber("11000000000000000000000")
 
-      LINK.approve(aaveLendingPool.address, AssetAmount, {"from" : "0x28C6c06298d514Db089934071355E5743bf21d60"})
+      let initialBorrow = new BigNumber("50000000000000000000")
 
-      let borrowMe = new BigNumber("100000000000000000000")
+
+      LINK.approve(aaveLendingPool.address, AssetAmount, {"from" : "0x28C6c06298d514Db089934071355E5743bf21d60"})
 
       let maxApproval = new BigNumber("99999999999999999999999999999999999999999")
 
+      let newInterest = new BigNumber("50000000000000000000")
+
       LINK.approve(PhantasmManager.address, AssetAmount, {"from" : "0x28C6c06298d514Db089934071355E5743bf21d60"});
 
-      await PhantasmManager.openLongPositionNFT(0,0, "0x514910771af9ca656af840dff83e8264ecf986ca", 50, AssetAmount, {"from" : "0x28C6c06298d514Db089934071355E5743bf21d60"});
+      await PhantasmManager.openLongPositionNFT(0,0, "0x514910771af9ca656af840dff83e8264ecf986ca", 50, AssetAmount, initialBorrow, {"from" : "0x28C6c06298d514Db089934071355E5743bf21d60"});
       
       console.log("position opened")
 
       erc20DAI.approve(PhantasmManager.address,maxApproval,{"from" : "0x28C6c06298d514Db089934071355E5743bf21d60"} )
 
-      await PhantasmManager.closeLongPosition(1, 0, {"from" : "0x28C6c06298d514Db089934071355E5743bf21d60"})
+      await PhantasmManager.closeLongPosition(1, 0,newInterest , {"from" : "0x28C6c06298d514Db089934071355E5743bf21d60"})
 
  
     });
 
+
+    it("Create a Short Position", async () => {
+      // Iterative Tests here
+      /*
+    function leverageLong(address _asset, address _swapper, uint256 _initialAmount, uint256 _borrowFactor) external returns (uint256, uint256) {
+
+      */
+
+      let AssetAmount = new BigNumber("11000000000000000000000")
+
+      LINK.approve(aaveLendingPool.address, AssetAmount, {"from" : "0x28C6c06298d514Db089934071355E5743bf21d60"})
+
+      let borrowMe = new BigNumber("500000000000000000000")
+
+      let maxApproval = new BigNumber("99999999999999999999999999999999999999999")
+
+      erc20DAI.approve(aaveLendingPool.address, AssetAmount, {"from" : "0x28C6c06298d514Db089934071355E5743bf21d60"});
+
+      await aaveLendingPool.leverageShort("0x514910771af9ca656af840dff83e8264ecf986ca", UniswapImplementation.address,AssetAmount, borrowMe, 50, {"from" : "0x28C6c06298d514Db089934071355E5743bf21d60"});
+      
+
+ 
+    });
   });
