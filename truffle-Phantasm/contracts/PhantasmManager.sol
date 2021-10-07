@@ -10,7 +10,7 @@ import './interfaces/swapImplementation.sol';
 interface lenderImplementation {
     function leverageLong(address _asset, address _swapper, uint256 _initialCollateralAmount, uint256 _initialBorrowAmount, uint256 _borrowFactor) external returns (uint256, uint256);
     function leverageShort(address _asset, address _swapper, uint256 _initialCollateralAmount, uint256 _initialBorrowAmount, uint256 _borrowFactor) external returns (uint256, uint256);
-    function closeLongPosition(address _debtAsset, address _asset, address _swapper, uint256 _debtOwed, uint256 _totalCollateral) external;
+    function closePosition(address _debtAsset, address _asset, address _swapper, uint256 _debtOwed, uint256 _totalCollateral) external;
 }
 
 
@@ -136,7 +136,6 @@ contract PhantasmManager is ERC721 {
         return PositionID;
     }
 
-    // fix args for this, but needed them here to start passing tests
     function closeLongPosition(uint256 _tokenID, uint8 _swapImplementation, uint256 _interestAccured) public {
             require(ownerOf(_tokenID) == msg.sender, "You have to own something to get it's value");
             Position memory liquidateMe = viewPosition(_tokenID);
@@ -145,20 +144,20 @@ contract PhantasmManager is ERC721 {
             uint256 amountToRepay = _interestAccured + liquidateMe.debtOwed;
             IERC20(0x6B175474E89094C44Da98b954EedeAC495271d0F).transferFrom(msg.sender, address(this), amountToRepay);
             IERC20(0x6B175474E89094C44Da98b954EedeAC495271d0F).approve(lenderImplementations[liquidateMe.lender], amountToRepay);
-            lenderImplementation(lenderImplementations[liquidateMe.lender]).closeLongPosition(0x6B175474E89094C44Da98b954EedeAC495271d0F, liquidateMe.asset, swapImplementations[_swapImplementation], amountToRepay, liquidateMe.totalCollateral);
+            lenderImplementation(lenderImplementations[liquidateMe.lender]).closePosition(0x6B175474E89094C44Da98b954EedeAC495271d0F, liquidateMe.asset, swapImplementations[_swapImplementation], amountToRepay, liquidateMe.totalCollateral);
 
     }
 
     function openShortPositionNFT(
-         uint64 _lenderImplementation, 
+        uint64 _lenderImplementation, 
         uint64 _swapImplementation,
         address _shortToken,
         uint256 _borrowFactor,
         uint256 _assetAmount,
         uint256 _initialBorrow
         ) public returns (uint256) {
-            IERC20(_shortToken).transferFrom(msg.sender, address(this), _assetAmount);
-            IERC20(_shortToken).approve(lenderImplementations[_lenderImplementation], _assetAmount);
+            IERC20(0x6B175474E89094C44Da98b954EedeAC495271d0F).transferFrom(msg.sender, address(this), _assetAmount);
+            IERC20(0x6B175474E89094C44Da98b954EedeAC495271d0F).approve(lenderImplementations[_lenderImplementation], _assetAmount);
             (uint256 totalBorrow, uint256 totalCollateral) = lenderImplementation(lenderImplementations[_lenderImplementation]).leverageShort(_shortToken, swapImplementations[_swapImplementation], _assetAmount, _initialBorrow, _borrowFactor);
 
             Position memory createdPosition;
@@ -173,7 +172,18 @@ contract PhantasmManager is ERC721 {
 
             uint256 PositionID = addPosition(createdPosition);
             return PositionID;
-}
+        }
+        function closeShortPositionNFT(uint256 _tokenID, uint8 _swapImplementation, uint256 _interestAccured) public {
+            require(ownerOf(_tokenID) == msg.sender, "You have to own something to get it's value");
+            Position memory liquidateMe = viewPosition(_tokenID);
+            //swap(address _tokenIn, address _tokenOut, uint _amountIn, uint _amountOutMin, address _to)
+            // DAI to repay
+            uint256 amountToRepay = _interestAccured + liquidateMe.debtOwed;
+            IERC20(liquidateMe.asset).transferFrom(msg.sender, address(this), amountToRepay);
+            IERC20(liquidateMe.asset).approve(lenderImplementations[liquidateMe.lender], amountToRepay);
+            lenderImplementation(lenderImplementations[liquidateMe.lender]).closePosition(liquidateMe.asset, 0x6B175474E89094C44Da98b954EedeAC495271d0F, swapImplementations[_swapImplementation], amountToRepay, liquidateMe.totalCollateral);
+
+    }
 
     
 }
