@@ -34,7 +34,7 @@ contract Uniswap {
         uint amountOutMin;
 
         if(_amountOutMin == 0){
-            uint amountOutMin = 0;
+            uint amountOutMin = 1;
         } else{
             uint amountOutMin = _amountOutMin;
         }
