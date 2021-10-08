@@ -22,7 +22,7 @@ contract AaveImplementation {
     function leverageLong(address _asset, address _swapper, uint256 _initialCollateralAmount, uint256 _initialBorrowAmount, uint256 _borrowFactor) external returns (uint256, uint256) {
         
         IERC20(_asset).transferFrom(msg.sender, address(this), _initialCollateralAmount);
-        IERC20(_asset).approve(0x7d2768dE32b0b80b7a3454c06BdAc94A69DDc7A9, _initialCollateralAmount);
+        IERC20(_asset).approve(address(aaveLender), _initialCollateralAmount);
 
         deposit(_asset, _initialCollateralAmount);
         aaveLender.setUserUseReserveAsCollateral(_asset, true);
@@ -39,7 +39,7 @@ contract AaveImplementation {
             uint256 tokensBought = swapImplementation(_swapper).swap(DAI, _asset,borrowAmount, 1, address(this));
             uint256 nextBorrow = tokensBought;
             // Re-approving each deposit sucks, but is signficiantly safer
-            IERC20(_asset).approve(0x7d2768dE32b0b80b7a3454c06BdAc94A69DDc7A9, tokensBought);
+            IERC20(_asset).approve(address(aaveLender), tokensBought);
             deposit(_asset, tokensBought);
             totalCollateral += tokensBought;
         }
@@ -49,7 +49,7 @@ contract AaveImplementation {
 
     function leverageShort(address _asset, address _swapper, uint256 _initialCollateralAmount, uint256 _initialBorrowAmount, uint256 _borrowFactor) external returns (uint256, uint256) {
         IERC20(DAI).transferFrom(msg.sender, address(this), _initialCollateralAmount);
-        IERC20(DAI).approve(0x7d2768dE32b0b80b7a3454c06BdAc94A69DDc7A9, _initialCollateralAmount);
+        IERC20(DAI).approve(address(aaveLender), _initialCollateralAmount);
         deposit(DAI, _initialCollateralAmount);
         aaveLender.setUserUseReserveAsCollateral(DAI, true);
         uint256 nextBorrow = _initialBorrowAmount;
@@ -61,8 +61,8 @@ contract AaveImplementation {
         totalBorrow += borrowAmount;
         // (address _tokenIn, address _tokenOut, uint _amountIn, uint _amountOutMin, address _to
         IERC20(_asset).approve(_swapper, borrowAmount);
-        uint256 tokensBought = swapImplementation(_swapper).swap(_asset,0x6B175474E89094C44Da98b954EedeAC495271d0F,borrowAmount, 1, address(this));
-        IERC20(DAI).approve(0x7d2768dE32b0b80b7a3454c06BdAc94A69DDc7A9, tokensBought);
+        uint256 tokensBought = swapImplementation(_swapper).swap(_asset,DAI,borrowAmount, 1, address(this));
+        IERC20(DAI).approve(address(aaveLender), tokensBought);
         deposit(DAI, tokensBought);
         totalCollateral += tokensBought;
     
@@ -72,7 +72,7 @@ contract AaveImplementation {
     
     function closePosition(address _debtAsset, address _asset, address _swapper, uint256 _debtOwed, uint256 _totalCollateral) public {
         IERC20(_debtAsset).transferFrom(msg.sender, address(this), _debtOwed);
-        IERC20(_debtAsset).approve(0x7d2768dE32b0b80b7a3454c06BdAc94A69DDc7A9, _debtOwed);
+        IERC20(_debtAsset).approve(address(aaveLender), _debtOwed);
         repay(_debtAsset, _debtOwed);
         // Now with no debt, withdraw collateral
         uint256 amountWithdrawn = withdraw(_asset, _totalCollateral);
