@@ -14,7 +14,7 @@ Then, if Coin X moons you have $200 of collateral (Assuming the $160 of collater
 
 The reverse can be done to create a short position, where debt is owed in Coin X to collect the stablecoin collateral (Coin X is assumed to decrease in value, so it can be bought back for less).
 
-Phantasm Finance does this using Kashi and Sushiswap of the Sushi family, for their ease of incorporation across multiple chains, and End to End integration, but built with other providers in mind.
+Phantasm Finance does this using Aave and Uniswap at the moment, but many other implementations with lending providers like CREAM, Kashi, Compound are also possible, and using other DEXes to trade with.
 
 ## Demo
 
@@ -26,8 +26,12 @@ A floating-rate bond is debt to someone holding collateral in a lending pool. Si
 
 ## Future Plans
 
-I plan to continue work on Phantasm Finance after the hackathon ends, with some of the improvements outlined below 
+We plan to continue work on Phantasm Finance after the hackathon ends, with some of the improvements outlined below 
 
 - Launch on Polygon bringing the gas cost to a reasonable level. 
+
+- Integrate Compound
+- 
+- Integrate Kashi
 
 - UI/UX Improvements
