@@ -9,6 +9,7 @@ const Uniswapper = artifacts.require("Uniswap");
 const EEmph = artifacts.require("EEIntegration");
 const AaveLender = artifacts.require("AaveImplementation");
 const Phantasm = artifacts.require("PhantasmManager");
+const AaveInterface = artifacts.require("AaveTerminal");
 
 contract("AaveLender", (accounts) => {
     beforeEach(async () => {
@@ -97,6 +98,10 @@ contract("AaveLender", (accounts) => {
 
  
     });
+    it("Should demo 88mph", async () => {
+ 
+    })
+
     it("Should Create and Close an Insulated Position", async () => {
 
       let AssetAmount = new BigNumber("11000000000000000")
@@ -110,25 +115,39 @@ contract("AaveLender", (accounts) => {
       let AssetinDai = new BigNumber("3910000000000000000")
 
 
-      ercWETH.approve(aaveLendingPool.address, AssetAmount, {"from" : "0x5b3256965e7C3cF26E11FCAf296DfC8807C01073"})
+      ercWETH.approve(PhantasmManager.address, maxApproval, {"from" : "0x5b3256965e7C3cF26E11FCAf296DfC8807C01073"})
 
       erc20DAI.approve(PhantasmManager.address, maxApproval, {"from" : "0x5b3256965e7C3cF26E11FCAf296DfC8807C01073"})
-      /*
-    function openInsulatedLongPositionNFT(
-        address _longToken,
-        uint256 _borrowFactor,
-        uint256 _assetAmount,
-        uint256 _initialBorrow,
-        address _88mphPool,
-        uint64 _depositId,
-        uint256 stableFundAmount
-      */
+
       await PhantasmManager.openInsulatedLongPositionNFT("0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619", 50, AssetAmount, initialBorrow,"0x18a68F81E2E4f2A23604e9b067bf3fa1118B1990", 1, AssetinDai, {"from" : "0x5b3256965e7C3cF26E11FCAf296DfC8807C01073"});
       
       console.log("position opened")
+      /*
+
+        Now its time demonstrate that bond earning interest, so the Aave pool gets some activity
+
+      */
+      aaveTerminal = await AaveInterface.new(); // New instance just so I can interact with Aave easily
+
+      erc20DAI.approve(aaveTerminal.address, maxApproval, {"from" : "0x1914fA672c0871852Ff43d2af3Aab872dDC51b41"})
+
+      let AssetAmountEE = new BigNumber("11000000000000000")
+
+      let initialBorrowEE = new BigNumber("500000000000")
+
+      aaveTerminal.depositMoney(AssetAmountEE,initialBorrowEE, {"from" : "0x1914fA672c0871852Ff43d2af3Aab872dDC51b41"})
 
       const block = await web3.eth.getBlockNumber()
-      await time.advanceBlockTo(block + 100)
+      await time.advanceBlockTo(block + 500) // The little CPU that could
+
+      aaveTerminal.repayDebts(AssetAmountEE, {"from" : "0x1914fA672c0871852Ff43d2af3Aab872dDC51b41"})
+
+      /*
+
+        Then close the position and the generate interest will cover the position
+
+      */
+
       //     function closeInsulatedLongPosition(uint256 _tokenID, uint8 _swapImplementation, uint64 _bondImplementation) public {
 
       await PhantasmManager.closeInsulatedLongPosition(1,0,0, {"from" : "0x5b3256965e7C3cF26E11FCAf296DfC8807C01073"})
