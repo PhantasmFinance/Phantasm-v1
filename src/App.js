@@ -1,97 +1,51 @@
-import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Route } from "react-router-dom";
-import { Contract } from "@ethersproject/contracts";
-// import { getDefaultProvider } from "@ethersproject/providers";
-import useWeb3Modal from "./hooks/useWeb3Modal";
-import  Header  from "./components/Header";
-import  Dashboard  from "./components/Dashboard";
-import  abi from "./assets/testabi.json";
-import "./App.scss";
-import "antd/dist/antd.css";  
+import { Container, Flex, Heading, Spacer, Avatar, Box } from "@chakra-ui/react";
+import { ByMoralis, useMoralis } from "react-moralis";
+import { useState } from "react";
+import { Auth } from "./Auth";
+import { Route, Switch, Redirect, Link } from "react-router-dom";
+import { Home } from "./Home";
+import { Profile } from "./Profile";
 
-const targetNetwork = "kovan"
-var contractAddress="0x4c78955d513b39de335033e5ba5353a5544e277b";  
+const Moralis = require('moralis');
 
 function App() {
-  const [provider, loadWeb3Modal, logoutOfWeb3Modal] = useWeb3Modal();
-  const [userAddress, setUserAddress] = useState(null);
-  const [network, setNetwork] = useState(null);
-  const [perpetualContract, setPerpetualContract] = useState();
-
-
-
-  useEffect(() => {
-    let subscribed = true;
-
-    if (provider) {
-      setPerpetualContract(
-        new Contract(contractAddress, abi, provider.getSigner())
-      );
-      provider
-        .getNetwork()
-        .then(result => {
-          if (subscribed) {
-            setNetwork(result);
-          }
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    }
-
-    return () => {
-      subscribed = false;
-    };
-  }, [provider]);
-
-  useEffect(() => {
-    const signer = provider?.getSigner();
-    if (signer) {
-      if (perpetualContract) {
-        setPerpetualContract(perpetualContract.connect(signer));
-      }
-
-      signer
-        .getAddress()
-        .then(address => {
-          setUserAddress(address);
-        })
-        .catch(err => {
-          console.log("Couldn't get signer", err);
-        });
-    }
-  }, [provider]);
+  const { isAuthenticated, logout, user, isAuthUndefined } = useMoralis();
 
   return (
-    <div className="app">
-      <Router>
-        <Route path="/" exact>
-          <Header
-            address={userAddress}
-            provider={provider}
-            loadWeb3Modal={loadWeb3Modal}
-            logoutOfWeb3Modal={logoutOfWeb3Modal}
-          />
-          <Dashboard/>
-        </Route>
-      </Router>
-      {network && network.name !== targetNetwork && (
-        <div className="modal-container">
-          <div className="network-modal">
-            <p>Please switch network to {targetNetwork}</p>
-          </div>
-        </div>
+    <Container w="1200px" maxWidth="100ch">
+      <Flex my={6}>
+        <Link to="/" exact>
+          <Heading>Home</Heading>
+        </Link>
+        <Spacer />
+        {isAuthenticated && (
+          <Link to="/profile" exact>
+            <Avatar name={user.attributes.username} />
+          </Link>
+        )}
+      </Flex>
+
+      <Heading mb={6}>Welcome to Phantasm Finance, {user ? user.attributes.username : " Authenticate Please"}</Heading>
+      {isAuthenticated ? (
+        <Switch>
+          <Route path="/" exact>
+            <Home />
+          </Route>
+          <Route path="/profile" exact>
+            <Profile />
+          </Route>
+        </Switch>
+      ) : (
+        <>
+          {!isAuthUndefined && <Redirect to="/" />}
+          <Auth />
+        </>
       )}
-    </div>
+      <Box mt={6}>
+        <ByMoralis />
+      </Box>
+    </Container>
   );
 }
-
-// Reload on Network Switch
-window.ethereum &&
-  window.ethereum.on("chainChanged", () => {
-    setTimeout(() => {
-      window.location.reload();
-    }, 1);
-  });
 
 export default App;
