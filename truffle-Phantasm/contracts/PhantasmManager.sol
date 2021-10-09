@@ -6,6 +6,7 @@ import "./interfaces/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import './interfaces/swapImplementation.sol';
 
+// Updated for Polygon
 
 interface lenderImplementation {
     function leverageLong(address _asset, address _swapper, uint256 _initialCollateralAmount, uint256 _initialBorrowAmount, uint256 _borrowFactor) external returns (uint256, uint256);
@@ -35,7 +36,7 @@ contract PhantasmManager is ERC721 {
     // Ledger holds all token ids to tokens
     mapping(uint256 => Position) private positionLedger;
     uint256 counter = 0;
-    address public constant DAI = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
+    address public constant DAI = 0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063;
     constructor() ERC721("Phantasm Position", "SPCTR") {
         owner = msg.sender;
     }
