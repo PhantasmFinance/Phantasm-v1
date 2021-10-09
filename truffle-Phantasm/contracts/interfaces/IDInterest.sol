@@ -29,7 +29,7 @@ interface DInterest {
     }
 
     function fund(uint64, uint256) external returns (uint64, uint256, uint256, uint256);
-    function makeDeposit (address, address, uint256, uint64) external returns (uint64, uint256);
+    function deposit (uint256, uint64) external returns (uint64, uint256);
     // Monitor deposit events to be emitted to scrape depositIDs
 
     function getFunding(uint64) external view returns (Funding memory);
