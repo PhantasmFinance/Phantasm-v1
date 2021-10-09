@@ -97,7 +97,7 @@ contract("AaveLender", (accounts) => {
 
  
     });
-    it("Should Created and Close and Insulated Position", async () => {
+    it("Should Create and Close an Insulated Position", async () => {
 
       let AssetAmount = new BigNumber("11000000000000000")
 
