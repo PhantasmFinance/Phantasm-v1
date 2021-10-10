@@ -38,15 +38,15 @@ export const MainCard = ({ _asset, _protocol, _totalTokensLocked, _totalUSDLocke
 
   web3.eth.getAccounts().then(console.log)
 
-  let AssetAmount = new web3.utils.BN("11000000000000000")
+  let AssetAmount = new web3.utils.BN("11000000000000000000000")
 
-  let initialBorrow = new web3.utils.BN("50000000000000")
+  let initialBorrow = new web3.utils.BN("50000000000000000000")
 
-  let maxApproval =  new web3.utils.BN("20438906257496643008352")
+  let maxApproval =  new web3.utils.BN("99999999999999999999999999999999999999999")
 
-  let newInterest = new web3.utils.BN("1639337361")
+  let newInterest = new web3.utils.BN("50000000000000000000")
 
-  let AssetinDai = new web3.utils.BN("3910000000000000000")
+  let AssetinDai = new web3.utils.BN("306364830000000000000000")
 
 
   let AssetAmountEE = new web3.utils.BN("11000000000000000")
@@ -58,7 +58,7 @@ export const MainCard = ({ _asset, _protocol, _totalTokensLocked, _totalUSDLocke
 
   
   async function openlong() {
-    const coolNumber = await contract.methods.openInsulatedLongPositionNFT("0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619", 50, AssetAmount, initialBorrow,"0x18a68F81E2E4f2A23604e9b067bf3fa1118B1990", 1, AssetinDai)
+    const coolNumber = await contract.methods.openInsulatedLongPositionNFT("0x514910771af9ca656af840dff83e8264ecf986ca", 50, AssetAmount, initialBorrow, 1, AssetinDai)
   .send({ from: "0x0A9903B08c7cCb1E25e5488E1001e2ADED1cD92D" }).then(console.log)
   }
 

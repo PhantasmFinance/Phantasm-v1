@@ -17,12 +17,12 @@ export const Profile = () => {
   web3.eth.getAccounts().then(console.log)
 
   let contract = new web3.eth.Contract(abi, '0x42bcde274fbceb42d311741557c73d52a7af087e')
-  let newInterest = new web3.utils.BN("1639337361")
+  let newInterest = new web3.utils.BN("50000000000000000000")
 
 
   async function closePosition() {
-    const coolNumber = await contract.methods.closeLongPosition(1, 0, newInterest)
-  .send({ from: "0x42bcde274fbceb42d311741557c73d52a7af087e" }).then(console.log)
+    const coolNumber = await contract.methods.closeInsulatedLongPosition(1,0,0, newInterest)
+  .send({ from: "0x28C6c06298d514Db089934071355E5743bf21d60" }).then(console.log)
   console.log("wew99")
   }
 
