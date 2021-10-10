@@ -38,7 +38,7 @@ export const Profile = () => {
               </Stack>
               <Stack mx="25px">
                 <Text as="u" fontSize="xl">
-                  Insulated
+                  Insured
                 </Text>
                 <Center>
                   <CheckIcon />
