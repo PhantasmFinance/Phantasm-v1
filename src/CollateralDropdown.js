@@ -80,7 +80,7 @@ export const CollateralDropdown = () => {
             {items.map((item) =>(
              <MenuItem
                 minH="40px"
-                value={bat.ticker}
+                value={item.tokenSymbol}
                 onClick={(event) => {
                   const selectedToken = event.currentTarget.value;
                   setCollateralToken(selectedToken);
