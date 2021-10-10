@@ -1,43 +1,79 @@
-import { Box, Input, Text, Stack, Button } from "@chakra-ui/react";
-import { useState } from "react";
-import { useMoralis } from "react-moralis";
-import { ErrorBox } from "./Error";
+import { Box, Image, Heading, Stack, Text, Button, useColorMode, Center, Slider, SliderTrack, SliderFilledTrack, SliderThumb, Flex } from "@chakra-ui/react";
+import React, { useState } from "react";
+import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
+import { PositionOption } from "./PositionOption";
+import { CollateralDropdown } from "./CollateralDropdown";
+import { BorrowDropdown } from "./BorrowDropdown";
+import { useMoralis, useMoralisWeb3Api } from "react-moralis";
 
-export const Profile = () => {
-  const { user, setUserData, userError, isUserUpdating } = useMoralis();
+export const CurrentPositions = () => {
+  const { colorMode, toggleColorMode } = useColorMode();
 
-  const [username, setUsername] = useState(user.attributes.username);
-  const [email, setEmail] = useState(user.attributes.email);
-  const [password, setPassword] = useState("");
-
-  const handleSave = () => {
-    setUserData({
-      username,
-      email,
-      password: password === "" ? undefined : password,
-    });
-  };
+  async function closePosition() {
+    console.log("Close the position");
+  }
 
   return (
-    <Box>
-      <Stack spacing={3}>
-        {userError && <ErrorBox title="User Change Failed" message={userError.message} />}
+    <div>
+      <Box p={3} rounded="20px" overflow="hidden" bg={colorMode === "dark" ? "gray.700" : "gray.200"} my={10} mr={5} boxShadow="dark-lg">
+        <Heading mb="20px">Current Positions</Heading>
         <Box>
-          <Text>Username</Text>
-          <Input value={username} onChange={(event) => setUsername(event.currentTarget.value)} />
+          <Center>
+            <Flex>
+              <Stack mx="25px">
+                <Text as="u" fontSize="xl">
+                  Asset
+                </Text>
+                <Center>
+                  <Image boxSize="2rem" borderRadius="full" src="https://cryptologos.cc/logos/multi-collateral-dai-dai-logo.png"></Image>
+                </Center>
+              </Stack>
+              <Stack mx="25px">
+                <Text as="u" fontSize="xl">
+                  Long/Short
+                </Text>
+                <Center>
+                  <Text>Long</Text>
+                </Center>
+              </Stack>
+              <Stack mx="25px">
+                <Text as="u" fontSize="xl">
+                  Insulated
+                </Text>
+                <Center>
+                  <CheckIcon />
+                </Center>
+              </Stack>
+              <Stack mx="6px">
+                <Text as="u" fontSize="xl">
+                  Debt Owed
+                </Text>
+                <Center>
+                  <Text>500</Text>
+                </Center>
+              </Stack>
+              <Stack mx="6px">
+                <Text as="u" fontSize="xl">
+                  Total Collateral
+                </Text>
+                <Center>
+                  <Text>10000</Text>
+                </Center>
+              </Stack>
+              <Stack mx="5px">
+                <Center>
+                  <Text as="u" fontSize="xl">
+                    Action
+                  </Text>
+                </Center>
+                <Button variant="solid" colorScheme="green" size="sm" mt={5} boxShadow="lg" onClick={closePosition}>
+                  Close Position
+                </Button>
+              </Stack>
+            </Flex>
+          </Center>
         </Box>
-        <Box>
-          <Text>Email</Text>
-          <Input value={email} onChange={(event) => setEmail(event.currentTarget.value)} />
-        </Box>
-        <Box>
-          <Text>Password</Text>
-          <Input type="password" value={password} onChange={(event) => setPassword(event.currentTarget.value)} />
-        </Box>
-        <Button onClick={handleSave} isLoading={isUserUpdating}>
-          Save Changes
-        </Button>
-      </Stack>
-    </Box>
+      </Box>
+    </div>
   );
 };
