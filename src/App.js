@@ -24,6 +24,10 @@ function App() {
       <Flex my={6}>
         <Link to="/" exact>
           <Heading>Home</Heading>
+        </Link>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+        <Link to="/profile" exact>
+          <Heading>Profile</Heading>
         </Link>
         <Spacer />
         {isAuthenticated && (

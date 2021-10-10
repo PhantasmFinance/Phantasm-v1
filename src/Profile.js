@@ -6,7 +6,7 @@ import { CollateralDropdown } from "./CollateralDropdown";
 import { BorrowDropdown } from "./BorrowDropdown";
 import { useMoralis, useMoralisWeb3Api } from "react-moralis";
 
-export const CurrentPositions = () => {
+export const Profile = () => {
   const { colorMode, toggleColorMode } = useColorMode();
 
   async function closePosition() {
@@ -66,7 +66,7 @@ export const CurrentPositions = () => {
                     Action
                   </Text>
                 </Center>
-                <Button variant="solid" colorScheme="green" size="sm" mt={5} boxShadow="lg" onClick={closePosition}>
+                <Button variant="solid" colorScheme="red" size="sm" mt={5} boxShadow="lg" onClick={closePosition}>
                   Close Position
                 </Button>
               </Stack>
