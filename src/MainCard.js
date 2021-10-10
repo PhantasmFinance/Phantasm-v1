@@ -5,6 +5,9 @@ import { PositionOption } from "./PositionOption";
 import { CollateralDropdown } from "./CollateralDropdown";
 import { BorrowDropdown } from "./BorrowDropdown";
 import { useMoralis, Moralis } from "react-moralis";
+import abi from './abi/abis.json'
+import Web3 from 'web3';
+
 
 export const MainCard = ({ _asset, _protocol, _totalTokensLocked, _totalUSDLocked }) => {
   const compoundColorScheme = "green";
@@ -13,12 +16,49 @@ export const MainCard = ({ _asset, _protocol, _totalTokensLocked, _totalUSDLocke
   const daiViaCompoundPool = "0x11B1c87983F881B3686F8b1171628357FAA30038";
   const [pool, setPool] = useState("");
 
+
+
   const handlePoolChange = (value) => {
     setPool(value);
   };
   const { colorMode, toggleColorMode } = useColorMode();
   const [leverageAmount, setLeverageAmount] = useState(0);
   const percentAmount = leverageAmount * 100;
+  
+  const state = {
+    name: "",
+  }
+  const handleCallback= (childData) => {
+    this.setState({name:childData})
+    console.log(childData)
+    console.log("weew")
+  }
+   
+  function test(){
+  const web3 = new Web3('http://127.0.0.1:8545');
+
+  web3.eth.getAccounts().then(console.log)
+
+  let AssetAmount = new web3.utils.BN("11000000000000000")
+
+  let initialBorrow = new web3.utils.BN("50000000000000")
+
+  let maxApproval =  new web3.utils.BN("99999999999999999999999999999999999999999")
+
+  let newInterest = new web3.utils.BN("50000000000000000000")
+
+  let AssetinDai = new web3.utils.BN("3910000000000000000")
+
+
+
+  let contract = new web3.eth.Contract(abi, '0x9CDb7f14EA59852b65A7884e1d6C66F6e1b13CC0')
+
+  contract.methods.DAI().call().then(console.log)
+  async function changeCoolNumber() {
+    const coolNumber = await contract.methods.openInsulatedLongPositionNFT("0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619", 50, AssetAmount, initialBorrow,"0x18a68F81E2E4f2A23604e9b067bf3fa1118B1990", 1, AssetinDai)
+  .send({ from: "0x0A9903B08c7cCb1E25e5488E1001e2ADED1cD92D" }).then(console.log)
+  }
+}
 
   return (
     <div className="app">
@@ -48,6 +88,8 @@ export const MainCard = ({ _asset, _protocol, _totalTokensLocked, _totalUSDLocke
           </Stack>
 
           <CollateralDropdown />
+
+
           <BorrowDropdown />
 
           <PositionOption />

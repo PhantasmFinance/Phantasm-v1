@@ -1,15 +1,28 @@
 import { Box, Text, Heading } from "@chakra-ui/layout";
 import { Cards } from "./Cards";
+import TradingViewWidget, { Themes } from 'react-tradingview-widget';
 import { Dropdown } from "./Dropdown";
 import { MainCard } from "./MainCard";
+import "./Home.css"
 
 export const Home = () => {
   return (
-    <Box>
+      <box class="flexbox-container">
+
       <Dropdown />
-      <MainCard />
-      <Heading mt={4}>Deposits</Heading>
-      <Cards />
-    </Box>
+      <div class="main">
+      <MainCard class="main"/>
+      </div>
+      <div class='trading'>
+        <TradingViewWidget
+                    symbol="ETHUSD"
+                    theme={Themes.DARK}
+                    locale="en"
+                    autosize
+
+              />  
+        </div>
+
+      </box>
   );
 };
