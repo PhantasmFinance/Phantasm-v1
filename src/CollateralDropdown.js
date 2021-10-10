@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { useEffect } from 'react';
 import axios from 'axios';
 
-
+const tokenSymbols=['USDC', 'yCRV', 'DAI', 'UNI', 'CRV:oBTC', 'CRV:HUSD', 'aLINK v1', 'crvRenWSBTC']
 const onTrigger = (event) => {
   this.props.parentCallback(event.target.myname.value);
   event.preventDefault();
@@ -41,7 +41,9 @@ export const CollateralDropdown = () => {
         (result) => {
           setIsLoaded(true);
           setItems(result.data);
-          console.log(result)
+          for (let i = 0; i < result.data.length; i++) {
+            console.log(result.data[i].tokenSymbol)
+          }
         },
         (error) => {
           setIsLoaded(true);
@@ -51,7 +53,8 @@ export const CollateralDropdown = () => {
   }, [])
 
   console.log(items)
-  console.log("se")
+
+
 
   const getTokenBalance = async (_address) => {
     const tokenBalances = await Web3Api.account.getTokenBalances();
@@ -77,38 +80,8 @@ export const CollateralDropdown = () => {
             </MenuButton>
 
             <MenuList>
-              <MenuItem
-                minH="48px"
-                value={weth.ticker}
-                address={weth.address}
-                onClick={(event) => {
-                  const selectedToken = event.currentTarget.value;
-                  setCollateralToken(selectedToken);
-                  const selectedTokenAddress = event.currentTarget.address;
-                  setTokenAddress(selectedTokenAddress);
-                  const selectedTokenBalance = getTokenBalance(selectedTokenAddress);
-                  setTokenBalance(selectedTokenBalance);
-                }}
-              >
-                <Image boxSize="2rem" borderRadius="full" src={weth.logo} alt="Aave" mr="12px" />
-                <Stack>
-                  <span>WETH</span>
-                </Stack>
-              </MenuItem>
-              <MenuItem
-                minH="40px"
-                value={link.ticker}
-                onClick={(event) => {
-                  const selectedToken = event.currentTarget.value;
-                  setCollateralToken(selectedToken);
-                }}
-              >
-                <Image boxSize="2rem" borderRadius="full" src={link.logo} alt="Compound" mr="12px" />
-                <Stack>
-                  <span>LINK</span>
-                </Stack>
-              </MenuItem>
-              <MenuItem
+            {items.map((item) =>(
+             <MenuItem
                 minH="40px"
                 value={bat.ticker}
                 onClick={(event) => {
@@ -116,51 +89,13 @@ export const CollateralDropdown = () => {
                   setCollateralToken(selectedToken);
                 }}
               >
-                <Image boxSize="2rem" borderRadius="full" src={bat.logo} alt="Compound" mr="12px" />
                 <Stack>
-                  <span>BAT</span>
+                  <span>{item.tokenSymbol}</span>
                 </Stack>
               </MenuItem>
-              <MenuItem
-                minH="40px"
-                value={mkr.ticker}
-                onClick={(event) => {
-                  const selectedToken = event.currentTarget.value;
-                  setCollateralToken(selectedToken);
-                }}
-              >
-                <Image boxSize="2rem" borderRadius="full" src={mkr.logo} alt="Compound" mr="12px" />
-                <Stack>
-                  <span>MKR</span>
-                </Stack>
-              </MenuItem>
-              <MenuItem
-                minH="40px"
-                value={yfi.ticker}
-                onClick={(event) => {
-                  const selectedToken = event.currentTarget.value;
-                  setCollateralToken(selectedToken);
-                }}
-              >
-                <Image boxSize="2rem" borderRadius="full" src={yfi.logo} alt="Compound" mr="12px" />
-                <Stack>
-                  <span>YFI</span>
-                </Stack>
-              </MenuItem>
-              <MenuItem
-                minH="40px"
-                value={uni.ticker}
-                onClick={(event) => {
-                  const selectedToken = event.currentTarget.value;
-                  setCollateralToken(selectedToken);
-                }}
-              >
-                <Image boxSize="2rem" borderRadius="full" src={uni.logo} alt="Compound" mr="12px" />
-                <Stack>
-                  <span>UNI</span>
-                </Stack>
-              </MenuItem>
-			              </MenuList>
+            ))}
+
+            </MenuList> 
 
 
 

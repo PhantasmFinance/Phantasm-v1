@@ -7,6 +7,8 @@ import { BorrowDropdown } from "./BorrowDropdown";
 import { useMoralis, Moralis } from "react-moralis";
 import abi from './abi/abis.json'
 import Web3 from 'web3';
+import abi2 from './abi/abis88.json'
+
 
 
 export const MainCard = ({ _asset, _protocol, _totalTokensLocked, _totalUSDLocked }) => {
@@ -34,7 +36,6 @@ export const MainCard = ({ _asset, _protocol, _totalTokensLocked, _totalUSDLocke
     console.log("weew")
   }
    
-  function test(){
   const web3 = new Web3('http://127.0.0.1:8545');
 
   web3.eth.getAccounts().then(console.log)
@@ -43,22 +44,33 @@ export const MainCard = ({ _asset, _protocol, _totalTokensLocked, _totalUSDLocke
 
   let initialBorrow = new web3.utils.BN("50000000000000")
 
-  let maxApproval =  new web3.utils.BN("99999999999999999999999999999999999999999")
+  let maxApproval =  new web3.utils.BN("20438906257496643008352")
 
-  let newInterest = new web3.utils.BN("50000000000000000000")
+  let newInterest = new web3.utils.BN("1639337361")
 
   let AssetinDai = new web3.utils.BN("3910000000000000000")
 
 
+  let AssetAmountEE = new web3.utils.BN("11000000000000000")
 
-  let contract = new web3.eth.Contract(abi, '0x9CDb7f14EA59852b65A7884e1d6C66F6e1b13CC0')
+  let initialBorrowEE = new web3.utils.BN("500000000000")
+
+  let contract = new web3.eth.Contract(abi, '0x42bcde274fbceb42d311741557c73d52a7af087e')
+  let contract88 = new web3.eth.Contract(abi2, '0x42bcde274fbceb42d311741557c73d52a7af087e')
 
   contract.methods.DAI().call().then(console.log)
   async function changeCoolNumber() {
     const coolNumber = await contract.methods.openInsulatedLongPositionNFT("0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619", 50, AssetAmount, initialBorrow,"0x18a68F81E2E4f2A23604e9b067bf3fa1118B1990", 1, AssetinDai)
   .send({ from: "0x0A9903B08c7cCb1E25e5488E1001e2ADED1cD92D" }).then(console.log)
   }
-}
+
+  async function changeCoolNumber2() {
+    const coolNumber = await contract88.methods.makeDeposit("0x6D97eA6e14D35e10b50df9475e9EFaAd1982065E", maxApproval, newInterest)
+  .send({ from: "0x42bcde274fbceb42d311741557c73d52a7af087e" }).then(console.log)
+  console.log("wew99")
+  }
+
+  changeCoolNumber2();
 
   return (
     <div className="app">
