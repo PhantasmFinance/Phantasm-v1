@@ -59,18 +59,23 @@ export const MainCard = ({ _asset, _protocol, _totalTokensLocked, _totalUSDLocke
   let contract88 = new web3.eth.Contract(abi2, '0x42bcde274fbceb42d311741557c73d52a7af087e')
 
   contract.methods.DAI().call().then(console.log)
-  async function changeCoolNumber() {
+  
+  async function openlong() {
     const coolNumber = await contract.methods.openInsulatedLongPositionNFT("0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619", 50, AssetAmount, initialBorrow,"0x18a68F81E2E4f2A23604e9b067bf3fa1118B1990", 1, AssetinDai)
   .send({ from: "0x0A9903B08c7cCb1E25e5488E1001e2ADED1cD92D" }).then(console.log)
   }
 
-  async function changeCoolNumber2() {
+  async function makedeposit() {
     const coolNumber = await contract88.methods.makeDeposit("0x6D97eA6e14D35e10b50df9475e9EFaAd1982065E", maxApproval, newInterest)
   .send({ from: "0x42bcde274fbceb42d311741557c73d52a7af087e" }).then(console.log)
   console.log("wew99")
   }
 
-  changeCoolNumber2();
+  async function closelong() {
+    const coolNumber = await contract.methods.closeLongPosition(1, 0, newInterest)
+  .send({ from: "0x42bcde274fbceb42d311741557c73d52a7af087e" }).then(console.log)
+  console.log("wew99")
+  }
 
   return (
     <div className="app">
@@ -127,7 +132,7 @@ export const MainCard = ({ _asset, _protocol, _totalTokensLocked, _totalUSDLocke
             <SliderThumb boxSize={6} />
           </Slider>
           <Center>
-            <Button variant="solid" colorScheme="green" size="sm" mt={5} boxShadow="lg">
+            <Button onClick={openlong}  variant="solid" colorScheme="green" size="sm" mt={5} boxShadow="lg">
               Enter Position
             </Button>
           </Center>

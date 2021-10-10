@@ -5,12 +5,25 @@ import { PositionOption } from "./PositionOption";
 import { CollateralDropdown } from "./CollateralDropdown";
 import { BorrowDropdown } from "./BorrowDropdown";
 import { useMoralis, useMoralisWeb3Api } from "react-moralis";
+import abi from './abi/abis.json'
+import Web3 from 'web3';
+import abi2 from './abi/abis88.json'
 
 export const Profile = () => {
   const { colorMode, toggleColorMode } = useColorMode();
 
+  const web3 = new Web3('http://127.0.0.1:8545');
+
+  web3.eth.getAccounts().then(console.log)
+
+  let contract = new web3.eth.Contract(abi, '0x42bcde274fbceb42d311741557c73d52a7af087e')
+  let newInterest = new web3.utils.BN("1639337361")
+
+
   async function closePosition() {
-    console.log("Close the position");
+    const coolNumber = await contract.methods.closeLongPosition(1, 0, newInterest)
+  .send({ from: "0x42bcde274fbceb42d311741557c73d52a7af087e" }).then(console.log)
+  console.log("wew99")
   }
 
   return (
