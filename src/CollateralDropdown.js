@@ -41,9 +41,7 @@ export const CollateralDropdown = () => {
         (result) => {
           setIsLoaded(true);
           setItems(result.data);
-          for (let i = 0; i < result.data.length; i++) {
-            console.log(result.data[i].tokenSymbol)
-          }
+
         },
         (error) => {
           setIsLoaded(true);
@@ -52,7 +50,6 @@ export const CollateralDropdown = () => {
       )
   }, [])
 
-  console.log(items)
 
 
 

@@ -32,8 +32,6 @@ export const MainCard = ({ _asset, _protocol, _totalTokensLocked, _totalUSDLocke
   }
   const handleCallback= (childData) => {
     this.setState({name:childData})
-    console.log(childData)
-    console.log("weew")
   }
    
   const web3 = new Web3('http://127.0.0.1:8545');
@@ -58,7 +56,6 @@ export const MainCard = ({ _asset, _protocol, _totalTokensLocked, _totalUSDLocke
   let contract = new web3.eth.Contract(abi, '0x42bcde274fbceb42d311741557c73d52a7af087e')
   let contract88 = new web3.eth.Contract(abi2, '0x42bcde274fbceb42d311741557c73d52a7af087e')
 
-  contract.methods.DAI().call().then(console.log)
   
   async function openlong() {
     const coolNumber = await contract.methods.openInsulatedLongPositionNFT("0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619", 50, AssetAmount, initialBorrow,"0x18a68F81E2E4f2A23604e9b067bf3fa1118B1990", 1, AssetinDai)
@@ -83,7 +80,7 @@ export const MainCard = ({ _asset, _protocol, _totalTokensLocked, _totalUSDLocke
         <Center>
           <Image src="https://s2.coinmarketcap.com/static/img/coins/200x200/4943.png" alt="Card Image" boxSize="80px" mt={5}></Image>
           <ChevronRightIcon w={8} h={8} mt={5} />
-          <Image src="https://www.economywatch.com/wp-content/uploads/2021/09/logo-8.png" alt="Card Image" boxSize="80px" mt={5}></Image>
+          <Image src="https://cryptologos.cc/logos/aave-aave-logo.png" alt="Card Image" boxSize="80px" mt={5}></Image>
         </Center>
         <Box p={5}>
           <Stack align="center">
