@@ -1,18 +1,26 @@
 import { Container, Flex, Heading, Spacer, Avatar, Box } from "@chakra-ui/react";
 import { ByMoralis, useMoralis } from "react-moralis";
 import { useState } from "react";
+import axios from 'axios';
 import { Auth } from "./Auth";
 import { Route, Switch, Redirect, Link } from "react-router-dom";
 import { Home } from "./Home";
 import { Profile } from "./Profile";
+import { useEffect } from 'react';
+
 
 const Moralis = require('moralis');
 
 function App() {
   const { isAuthenticated, logout, user, isAuthUndefined } = useMoralis();
+  const [error, setError] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [items, setItems] = useState([]);
+  
+
 
   return (
-    <Container w="1200px" maxWidth="100ch">
+    <Container maxWidth="900ch">
       <Flex my={6}>
         <Link to="/" exact>
           <Heading>Home</Heading>
@@ -25,7 +33,7 @@ function App() {
         )}
       </Flex>
 
-      <Heading mb={6}>Welcome to Phantasm Finance, {user ? user.attributes.username : " Authenticate Please"}</Heading>
+      <Heading class="heading"mb={5}>Welcome to Phantasm Finance, {user ? user.attributes.username : " Authenticate Please"}</Heading>
       {isAuthenticated ? (
         <Switch>
           <Route path="/" exact>
@@ -41,9 +49,8 @@ function App() {
           <Auth />
         </>
       )}
-      <Box mt={6}>
-        <ByMoralis />
-      </Box>
+
+
     </Container>
   );
 }

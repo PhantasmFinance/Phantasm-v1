@@ -3,6 +3,14 @@ import { ChevronDownIcon } from "@chakra-ui/icons";
 import React, { useState } from "react";
 import { useMoralis, useMoralisWeb3Api } from "react-moralis";
 import { Link } from "react-router-dom";
+import { useEffect } from 'react';
+import axios from 'axios';
+
+const tokenSymbols=['USDC', 'yCRV', 'DAI', 'UNI', 'CRV:oBTC', 'CRV:HUSD', 'aLINK v1', 'crvRenWSBTC']
+const onTrigger = (event) => {
+  this.props.parentCallback(event.target.myname.value);
+  event.preventDefault();
+}
 
 export const CollateralDropdown = () => {
   const Web3Api = useMoralisWeb3Api();
@@ -19,6 +27,34 @@ export const CollateralDropdown = () => {
   const [amountIn, setAmountIn] = useState("");
   const [tokenAddress, setTokenAddress] = useState("");
   const [tokenBalance, setTokenBalance] = useState("");
+  const [error, setError] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    const result= axios.get("https://api.88mph.app/pools",
+      {
+        query:  `{        
+        } `
+      }
+      ).then(
+        (result) => {
+          setIsLoaded(true);
+          setItems(result.data);
+          for (let i = 0; i < result.data.length; i++) {
+            console.log(result.data[i].tokenSymbol)
+          }
+        },
+        (error) => {
+          setIsLoaded(true);
+          setError(error);
+        }
+      )
+  }, [])
+
+  console.log(items)
+
+
 
   const getTokenBalance = async (_address) => {
     const tokenBalances = await Web3Api.account.getTokenBalances();
@@ -28,6 +64,8 @@ export const CollateralDropdown = () => {
       }
     }
   };
+
+
 
   return (
     <Box>
@@ -40,39 +78,10 @@ export const CollateralDropdown = () => {
             <MenuButton as={Button} w="120px" rightIcon={<ChevronDownIcon />}>
               {collateralToken}
             </MenuButton>
+
             <MenuList>
-              <MenuItem
-                minH="48px"
-                value={weth.ticker}
-                address={weth.address}
-                onClick={(event) => {
-                  const selectedToken = event.currentTarget.value;
-                  setCollateralToken(selectedToken);
-                  const selectedTokenAddress = event.currentTarget.address;
-                  setTokenAddress(selectedTokenAddress);
-                  const selectedTokenBalance = getTokenBalance(selectedTokenAddress);
-                  setTokenBalance(selectedTokenBalance);
-                }}
-              >
-                <Image boxSize="2rem" borderRadius="full" src={weth.logo} alt="Aave" mr="12px" />
-                <Stack>
-                  <span>WETH</span>
-                </Stack>
-              </MenuItem>
-              <MenuItem
-                minH="40px"
-                value={link.ticker}
-                onClick={(event) => {
-                  const selectedToken = event.currentTarget.value;
-                  setCollateralToken(selectedToken);
-                }}
-              >
-                <Image boxSize="2rem" borderRadius="full" src={link.logo} alt="Compound" mr="12px" />
-                <Stack>
-                  <span>LINK</span>
-                </Stack>
-              </MenuItem>
-              <MenuItem
+            {items.map((item) =>(
+             <MenuItem
                 minH="40px"
                 value={bat.ticker}
                 onClick={(event) => {
@@ -80,51 +89,17 @@ export const CollateralDropdown = () => {
                   setCollateralToken(selectedToken);
                 }}
               >
-                <Image boxSize="2rem" borderRadius="full" src={bat.logo} alt="Compound" mr="12px" />
                 <Stack>
-                  <span>BAT</span>
+                  <span>{item.tokenSymbol}</span>
                 </Stack>
               </MenuItem>
-              <MenuItem
-                minH="40px"
-                value={mkr.ticker}
-                onClick={(event) => {
-                  const selectedToken = event.currentTarget.value;
-                  setCollateralToken(selectedToken);
-                }}
-              >
-                <Image boxSize="2rem" borderRadius="full" src={mkr.logo} alt="Compound" mr="12px" />
-                <Stack>
-                  <span>MKR</span>
-                </Stack>
-              </MenuItem>
-              <MenuItem
-                minH="40px"
-                value={yfi.ticker}
-                onClick={(event) => {
-                  const selectedToken = event.currentTarget.value;
-                  setCollateralToken(selectedToken);
-                }}
-              >
-                <Image boxSize="2rem" borderRadius="full" src={yfi.logo} alt="Compound" mr="12px" />
-                <Stack>
-                  <span>YFI</span>
-                </Stack>
-              </MenuItem>
-              <MenuItem
-                minH="40px"
-                value={uni.ticker}
-                onClick={(event) => {
-                  const selectedToken = event.currentTarget.value;
-                  setCollateralToken(selectedToken);
-                }}
-              >
-                <Image boxSize="2rem" borderRadius="full" src={uni.logo} alt="Compound" mr="12px" />
-                <Stack>
-                  <span>UNI</span>
-                </Stack>
-              </MenuItem>
-            </MenuList>
+            ))}
+
+            </MenuList> 
+
+
+
+            
           </Menu>
           <Input value={amountIn} placeholder="0.0" border="none" alignSelf="right" onChange={(event) => setAmountIn(event.currentTarget.value)} />
         </Flex>
