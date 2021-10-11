@@ -113,6 +113,11 @@ contract EEIntegration is ERC1155Holder {
 ░█▀▀█ █▀▀ █── █──█ █▀▀ █▄▄▀ ▀▀█ 
 ░█─░█ ▀▀▀ ▀▀▀ █▀▀▀ ▀▀▀ ▀─▀▀ ▀▀▀
     */
+    
+    function makeDeposit (address _assetPool, uint256 _stableInAmount, uint64 _maturationTimestamp) public returns (uint64 depositID, uint256 interestAmount) {
+        dai.approve(_assetPool, _stableInAmount);
+        return DInterest(_assetPool).deposit(_stableInAmount, _maturationTimestamp);
+    }
 
     function buyYieldTokens (address _assetPool, uint64 _depositId, uint256 _stableInAmount) public returns (uint64 _fundingID, uint256 fundingMultitokensMinted, uint256 actualFundAmount, uint256 principalFunded) {
         dai.approve(_assetPool, _stableInAmount);
