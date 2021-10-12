@@ -31,10 +31,10 @@ export const BorrowDropdown = () => {
       <Text as="h2" fontWeight="bold">
         BORROW
       </Text>
-      <Box border="1px" borderColor="gray.200" borderRadius="md" p={2}>
+      <Box border="1px" borderColor="gray.200" borderRadius="md" p={2} bg="gray.800" boxShadow="dark-lg">
         <Flex>
           <Menu>
-            <MenuButton as={Button} w="120px" rightIcon={<ChevronDownIcon />}>
+            <MenuButton as={Button} w="120px" rightIcon={<ChevronDownIcon />} colorScheme="blue" bgGradient="linear(to-r, #9D8DF1, #B8CDF8, #1CFEBA)">
               {collateralToken}
             </MenuButton>
             <MenuList>
