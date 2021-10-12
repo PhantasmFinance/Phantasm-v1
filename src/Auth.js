@@ -1,9 +1,10 @@
-import { Button, Stack, Input, Text, Image, Center, Heading } from "@chakra-ui/react";
+import { Button, Stack, Input, Text, Image, Center, Heading, Flex } from "@chakra-ui/react";
 import { useState } from "react";
 import { useMoralis } from "react-moralis";
 import { ErrorBox } from "./Error";
 import logo from "./assets/ghost.png";
 import metamask from "./assets/images/metamask-fox.svg";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 
 const SignUp = () => {
   const { signup } = useMoralis();
@@ -55,6 +56,13 @@ export const Auth = () => {
         <Image src={metamask} boxSize={88} mr="16px" />
         Click To Enter
       </Button>
+      <Center>
+        <Flex>
+          <ChevronDownIcon boxSize={20} />
+          <Heading mt={4}>Learn More</Heading>
+          <ChevronDownIcon boxSize={20} />
+        </Flex>
+      </Center>
       <Text textAlign="center">
         <em>or</em>
       </Text>
