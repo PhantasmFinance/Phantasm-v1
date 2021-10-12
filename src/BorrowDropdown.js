@@ -13,7 +13,8 @@ export const BorrowDropdown = () => {
   const yfi = { ticker: "YFI", address: "0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e", logo: "https://cryptologos.cc/logos/yearn-finance-yfi-logo.png" };
   const uni = { ticker: "UNI", address: "0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984", logo: "https://cdn.moralis.io/eth/0x1f9840a85d5af5bf1d1762f925bdaddc4201f984.png" };
 
-  const [collateralToken, setCollateralToken] = useState("");
+  const [collateralToken, setCollateralToken] = useState("DAI");
+  const [borrowLogo, setBorrowLogo] = useState("https://cdn.moralis.io/eth/0x6b175474e89094c44da98b954eedeac495271d0f.png");
   const [amountIn, setAmountIn] = useState("");
   //const { Moralis } = useMoralisWeb3Api();
   const Web3Api = useMoralisWeb3Api();
@@ -26,6 +27,10 @@ export const BorrowDropdown = () => {
     await Web3Api.token.getTokenMetadataBySymbol({ symbols: _symbol }).logo;
   };
 
+  const logoChange = (_token) => {
+    setBorrowLogo(_token.logo);
+  };
+
   return (
     <Box>
       <Text as="h2" fontWeight="bold">
@@ -34,16 +39,34 @@ export const BorrowDropdown = () => {
       <Box border="1px" borderColor="gray.200" borderRadius="md" p={2} bg="gray.800" boxShadow="dark-lg">
         <Flex>
           <Menu>
-            <MenuButton as={Button} w="120px" rightIcon={<ChevronDownIcon />} colorScheme="blue" bgGradient="linear(to-r, #9D8DF1, #B8CDF8, #1CFEBA)">
-              {collateralToken}
+            <MenuButton as={Button} w="200px" rightIcon={<ChevronDownIcon />} colorScheme="blue" bgGradient="linear(to-r, #9D8DF1, #B8CDF8, #1CFEBA)" p={2}>
+              <Flex>
+                <Image src={borrowLogo} boxSize={6} mr={3} />
+                <Text mt={0.5}>{collateralToken}</Text>
+              </Flex>
             </MenuButton>
             <MenuList>
+              <MenuItem
+                minH="48px"
+                value={dai.ticker}
+                onClick={(event) => {
+                  const selectedToken = event.currentTarget.value;
+                  setCollateralToken(selectedToken);
+                  logoChange(dai);
+                }}
+              >
+                <Image boxSize="2rem" borderRadius="full" src={dai.logo} alt="Dai" mr="12px" />
+                <Stack>
+                  <span>DAI</span>
+                </Stack>
+              </MenuItem>
               <MenuItem
                 minH="48px"
                 value={weth.ticker}
                 onClick={(event) => {
                   const selectedToken = event.currentTarget.value;
                   setCollateralToken(selectedToken);
+                  logoChange(weth);
                 }}
               >
                 <Image boxSize="2rem" borderRadius="full" src={weth.logo} alt="Aave" mr="12px" />
@@ -57,6 +80,7 @@ export const BorrowDropdown = () => {
                 onClick={(event) => {
                   const selectedToken = event.currentTarget.value;
                   setCollateralToken(selectedToken);
+                  logoChange(link);
                 }}
               >
                 <Image boxSize="2rem" borderRadius="full" src={link.logo} alt="Compound" mr="12px" />
@@ -70,6 +94,7 @@ export const BorrowDropdown = () => {
                 onClick={(event) => {
                   const selectedToken = event.currentTarget.value;
                   setCollateralToken(selectedToken);
+                  logoChange(bat);
                 }}
               >
                 <Image boxSize="2rem" borderRadius="full" src={bat.logo} alt="Compound" mr="12px" />
@@ -83,6 +108,7 @@ export const BorrowDropdown = () => {
                 onClick={(event) => {
                   const selectedToken = event.currentTarget.value;
                   setCollateralToken(selectedToken);
+                  logoChange(mkr);
                 }}
               >
                 <Image boxSize="2rem" borderRadius="full" src={mkr.logo} alt="Compound" mr="12px" />
@@ -96,6 +122,7 @@ export const BorrowDropdown = () => {
                 onClick={(event) => {
                   const selectedToken = event.currentTarget.value;
                   setCollateralToken(selectedToken);
+                  logoChange(yfi);
                 }}
               >
                 <Image boxSize="2rem" borderRadius="full" src={yfi.logo} alt="Compound" mr="12px" />
@@ -109,6 +136,7 @@ export const BorrowDropdown = () => {
                 onClick={(event) => {
                   const selectedToken = event.currentTarget.value;
                   setCollateralToken(selectedToken);
+                  logoChange(uni);
                 }}
               >
                 <Image boxSize="2rem" borderRadius="full" src={uni.logo} alt="Compound" mr="12px" />

@@ -2,17 +2,15 @@ import { Radio, RadioGroup, HStack, Box, Image, Stack, Badge, Text, Button, useC
 import React, { useState } from "react";
 import { ChevronRightIcon } from "@chakra-ui/icons";
 
-export const PositionOption = ({}) => {
-  const [position, setPosition] = useState("long");
-
+export const PositionOption = ({ positionChange }) => {
   return (
     <Center mt={3}>
-      <RadioGroup onChange={setPosition} value={position}>
+      <RadioGroup defaultValue="long">
         <Stack spacing={4} direction="row">
-          <Radio value="long" colorScheme="green">
+          <Radio value="long" colorScheme="green" onClick={() => positionChange("LONG")} defaultChecked>
             Long
           </Radio>
-          <Radio value="short" colorScheme="green">
+          <Radio value="short" colorScheme="green" onClick={() => positionChange("SHORT")}>
             Short
           </Radio>
         </Stack>

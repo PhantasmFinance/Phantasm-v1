@@ -9,12 +9,12 @@ export const Home = () => {
   return (
     <box class="flexbox-container">
       <div class="main">
-        <Box w="500px" maxWidth="90ch">
+        <Box w="500px" maxWidth="100ch">
           <MainCard class="main" />
         </Box>
       </div>
       <div class="trading">
-        <TradingViewWidget symbol="ETHUSD" theme={Themes.DARK} locale="en" autosize />
+        <TradingViewWidget symbol="ETHDAI" theme={Themes.DARK} locale="en" autosize />
       </div>
     </box>
   );

@@ -20,7 +20,7 @@ function App() {
 
   return (
     <Container w="1200px" maxWidth="150ch">
-      <Flex my={6}>
+      <Flex my={10}>
         <Link to="/" exact>
           <Image src={logo} boxSize="60px"></Image>
         </Link>

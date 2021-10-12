@@ -11,26 +11,24 @@
   display: flex;
   flex-direction: column;
 }
-.heading{
+.heading {
   margin: 50px;
 }
 
-.site-footer{
+.site-footer {
   position: relative;
   text-align: center;
-  background-color:  #6400cf;
+  background-color: #6400cf;
   height: 100%;
   height: 75px;
-  width:100%;
-  }
-  
-.footer-copyright{
+  width: 100%;
+}
+
+.footer-copyright {
   font-size: 20px;
   padding-top: 30px;
   text-align: center;
   justify-content: center;
-
-
 }
 
 button {
@@ -80,4 +78,3 @@ button {
     transform: rotate(360deg);
   }
 }
-
