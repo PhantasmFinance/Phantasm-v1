@@ -119,7 +119,7 @@ export const MainCard = ({ _asset, _protocol, _totalTokensLocked, _totalUSDLocke
             <SliderThumb boxSize={6} />
           </Slider>
           <Center>
-            <Button onClick={openlong} p={10} variant="solid" colorScheme="green" size="l" mt={5} bgGradient="linear(to-r, #9D8DF1, #B8CDF8, #1CFEBA)" boxShadow="lg">
+            <Button onClick={openlong} p={10} variant="solid" colorScheme="green" size="l" mt={5} bgGradient="linear(to-r, #9D8DF1, #B8CDF8, #1CFEBA)" boxShadow="lg" fontSize="30px">
               Enter Position
             </Button>
           </Center>
