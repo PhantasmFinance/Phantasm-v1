@@ -10,7 +10,7 @@ module.exports = async function (deployer, network) {
   // deployment steps
   await deployer.deploy(Uniswap);
 
-  erc20DAI = await IERC20.at("0x8f3cf7ad23cd3cadbd9735aff958023239c6a063") //Polygon Correct 
+  erc20DAI = await IERC20.at("0x6b175474e89094c44da98b954eedeac495271d0f") //Polygon Correct 
 
 
   await deployer.deploy(AaveTerminal)
