@@ -1,16 +1,17 @@
-// SPDX-License-Identifier: MIT
 pragma solidity ^0.8;
 
 
-import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
+import '../node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol';
+import "../node_modules/@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import './interfaces/IDInterest.sol';
-import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
-contract EEIntegration is ERC1155Holder {
+import "../node_modules/@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
+
+contract EEIntegration is ERC1155Holder,IERC721Receiver {
 
     IERC20 public WETH = IERC20(0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2);
     IERC20 public dai = IERC20(0x6B175474E89094C44Da98b954EedeAC495271d0F);
     DInterest public daiViaAavePool = DInterest(0x6D97eA6e14D35e10b50df9475e9EFaAd1982065E);
-    DInterest public daiViaCompoundPool = DInterest(0x11B1c87983F881B3686F8b1171628357FAA30038);
+    //DInterest public daiViaCompoundPool = DInterest(0x11B1c87983F881B3686F8b1171628357FAA30038);
     address PhantasmManager;
 
     mapping (address => mapping (address => uint64[])) public myFundingIDs; // Pool Address => User Address => Funding Id
@@ -18,13 +19,14 @@ contract EEIntegration is ERC1155Holder {
     constructor(address _phantasmManager) {
         PhantasmManager = _phantasmManager; 
     }
+
+
     function findAndBuyYieldTokens(address _token, uint256 _amount) public returns (uint256 _amountSpent) {
         uint256 amountLeft = _amount;
         if (_token == address(dai)) {
             DInterest[] memory daiPools;
             daiPools = new DInterest[](2);
             daiPools[0] = daiViaAavePool;
-            daiPools[1] = daiViaCompoundPool;
 
             for (uint256 i = 0; i < daiPools.length; i++) {
                 if (daiPools[i].depositsLength() != 0) {
@@ -48,7 +50,6 @@ contract EEIntegration is ERC1155Holder {
             DInterest[] memory daiPools;
             daiPools = new DInterest[](2);
             daiPools[0] = daiViaAavePool;
-            daiPools[1] = daiViaCompoundPool;
             
             for (uint256 i = 0; i < daiPools.length; i++) {
                 if (myFundingIDs[address(daiPools[i])][msg.sender].length != 0) {
@@ -70,7 +71,6 @@ contract EEIntegration is ERC1155Holder {
             DInterest[] memory daiPools;
             daiPools = new DInterest[](2);
             daiPools[0] = daiViaAavePool;
-            daiPools[1] = daiViaCompoundPool;
 
             for (uint256 i = 0; i < daiPools.length; i++) {
                 if (myFundingIDs[address(daiPools[i])][msg.sender].length != 0) {
@@ -91,7 +91,6 @@ contract EEIntegration is ERC1155Holder {
             DInterest[] memory daiPools;
             daiPools = new DInterest[](2);
             daiPools[0] = daiViaAavePool;
-            daiPools[1] = daiViaCompoundPool;
 
             for (uint256 i = 0; i < daiPools.length; i++) {
                 if (daiPools[i].depositsLength() != 0) {
@@ -138,4 +137,9 @@ contract EEIntegration is ERC1155Holder {
     function getYTPriceFromDeposit(address _assetPool, uint64 _depositID) public view returns (uint256) {
         return (DInterest(_assetPool).getDeposit(_depositID).interestRate / DInterest(_assetPool).getDeposit(_depositID).maturationTimestamp - block.timestamp) * DInterest(_assetPool).getDeposit(_depositID).virtualTokenTotalSupply;
     }
+    function onERC721Received(address, address, uint256, bytes memory) public virtual override returns (bytes4) {
+        return this.onERC721Received.selector;
+    }
+
+
 }
